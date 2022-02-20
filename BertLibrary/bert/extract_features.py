@@ -222,3 +222,199 @@ def convert_examples_to_features(examples, seq_length, tokenizer):
     if tokens_b:
       # Modifies `tokens_a` and `tokens_b` in place so that the total
       # length is less than the specified length.
+      # Account for [CLS], [SEP], [SEP] with "- 3"
+      _truncate_seq_pair(tokens_a, tokens_b, seq_length - 3)
+    else:
+      # Account for [CLS] and [SEP] with "- 2"
+      if len(tokens_a) > seq_length - 2:
+        tokens_a = tokens_a[0:(seq_length - 2)]
+
+    # The convention in BERT is:
+    # (a) For sequence pairs:
+    #  tokens:   [CLS] is this jack ##son ##ville ? [SEP] no it is not . [SEP]
+    #  type_ids: 0     0  0    0    0     0       0 0     1  1  1  1   1 1
+    # (b) For single sequences:
+    #  tokens:   [CLS] the dog is hairy . [SEP]
+    #  type_ids: 0     0   0   0  0     0 0
+    #
+    # Where "type_ids" are used to indicate whether this is the first
+    # sequence or the second sequence. The embedding vectors for `type=0` and
+    # `type=1` were learned during pre-training and are added to the wordpiece
+    # embedding vector (and position vector). This is not *strictly* necessary
+    # since the [SEP] token unambiguously separates the sequences, but it makes
+    # it easier for the model to learn the concept of sequences.
+    #
+    # For classification tasks, the first vector (corresponding to [CLS]) is
+    # used as as the "sentence vector". Note that this only makes sense because
+    # the entire model is fine-tuned.
+    tokens = []
+    input_type_ids = []
+    tokens.append("[CLS]")
+    input_type_ids.append(0)
+    for token in tokens_a:
+      tokens.append(token)
+      input_type_ids.append(0)
+    tokens.append("[SEP]")
+    input_type_ids.append(0)
+
+    if tokens_b:
+      for token in tokens_b:
+        tokens.append(token)
+        input_type_ids.append(1)
+      tokens.append("[SEP]")
+      input_type_ids.append(1)
+
+    input_ids = tokenizer.convert_tokens_to_ids(tokens)
+
+    # The mask has 1 for real tokens and 0 for padding tokens. Only real
+    # tokens are attended to.
+    input_mask = [1] * len(input_ids)
+
+    # Zero-pad up to the sequence length.
+    while len(input_ids) < seq_length:
+      input_ids.append(0)
+      input_mask.append(0)
+      input_type_ids.append(0)
+
+    assert len(input_ids) == seq_length
+    assert len(input_mask) == seq_length
+    assert len(input_type_ids) == seq_length
+
+    if ex_index < 5:
+      tf.logging.info("*** Example ***")
+      tf.logging.info("unique_id: %s" % (example.unique_id))
+      tf.logging.info("tokens: %s" % " ".join(
+          [tokenization.printable_text(x) for x in tokens]))
+      tf.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
+      tf.logging.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
+      tf.logging.info(
+          "input_type_ids: %s" % " ".join([str(x) for x in input_type_ids]))
+
+    features.append(
+        InputFeatures(
+            unique_id=example.unique_id,
+            tokens=tokens,
+            input_ids=input_ids,
+            input_mask=input_mask,
+            input_type_ids=input_type_ids))
+  return features
+
+
+def _truncate_seq_pair(tokens_a, tokens_b, max_length):
+  """Truncates a sequence pair in place to the maximum length."""
+
+  # This is a simple heuristic which will always truncate the longer sequence
+  # one token at a time. This makes more sense than truncating an equal percent
+  # of tokens from each, since if one sequence is very short then each token
+  # that's truncated likely contains more information than a longer sequence.
+  while True:
+    total_length = len(tokens_a) + len(tokens_b)
+    if total_length <= max_length:
+      break
+    if len(tokens_a) > len(tokens_b):
+      tokens_a.pop()
+    else:
+      tokens_b.pop()
+
+
+def read_examples(input_file):
+  """Read a list of `InputExample`s from an input file."""
+  examples = []
+  unique_id = 0
+  with tf.gfile.GFile(input_file, "r") as reader:
+    while True:
+      line = tokenization.convert_to_unicode(reader.readline())
+      if not line:
+        break
+      line = line.strip()
+      text_a = None
+      text_b = None
+      m = re.match(r"^(.*) \|\|\| (.*)$", line)
+      if m is None:
+        text_a = line
+      else:
+        text_a = m.group(1)
+        text_b = m.group(2)
+      examples.append(
+          InputExample(unique_id=unique_id, text_a=text_a, text_b=text_b))
+      unique_id += 1
+  return examples
+
+
+def main(_):
+  tf.logging.set_verbosity(tf.logging.INFO)
+
+  layer_indexes = [int(x) for x in FLAGS.layers.split(",")]
+
+  bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
+
+  tokenizer = tokenization.FullTokenizer(
+      vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+
+  is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
+  run_config = tf.contrib.tpu.RunConfig(
+      master=FLAGS.master,
+      tpu_config=tf.contrib.tpu.TPUConfig(
+          num_shards=FLAGS.num_tpu_cores,
+          per_host_input_for_training=is_per_host))
+
+  examples = read_examples(FLAGS.input_file)
+
+  features = convert_examples_to_features(
+      examples=examples, seq_length=FLAGS.max_seq_length, tokenizer=tokenizer)
+
+  unique_id_to_feature = {}
+  for feature in features:
+    unique_id_to_feature[feature.unique_id] = feature
+
+  model_fn = model_fn_builder(
+      bert_config=bert_config,
+      init_checkpoint=FLAGS.init_checkpoint,
+      layer_indexes=layer_indexes,
+      use_tpu=FLAGS.use_tpu,
+      use_one_hot_embeddings=FLAGS.use_one_hot_embeddings)
+
+  # If TPU is not available, this will fall back to normal Estimator on CPU
+  # or GPU.
+  estimator = tf.contrib.tpu.TPUEstimator(
+      use_tpu=FLAGS.use_tpu,
+      model_fn=model_fn,
+      config=run_config,
+      predict_batch_size=FLAGS.batch_size)
+
+  input_fn = input_fn_builder(
+      features=features, seq_length=FLAGS.max_seq_length)
+
+  with codecs.getwriter("utf-8")(tf.gfile.Open(FLAGS.output_file,
+                                               "w")) as writer:
+    for result in estimator.predict(input_fn, yield_single_examples=True):
+      unique_id = int(result["unique_id"])
+      feature = unique_id_to_feature[unique_id]
+      output_json = collections.OrderedDict()
+      output_json["linex_index"] = unique_id
+      all_features = []
+      for (i, token) in enumerate(feature.tokens):
+        all_layers = []
+        for (j, layer_index) in enumerate(layer_indexes):
+          layer_output = result["layer_output_%d" % j]
+          layers = collections.OrderedDict()
+          layers["index"] = layer_index
+          layers["values"] = [
+              round(float(x), 6) for x in layer_output[i:(i + 1)].flat
+          ]
+          all_layers.append(layers)
+        features = collections.OrderedDict()
+        features["token"] = token
+        features["layers"] = all_layers
+        all_features.append(features)
+      output_json["features"] = all_features
+      writer.write(json.dumps(output_json) + "\n")
+
+
+if __name__ == "__main__":
+  flags.mark_flag_as_required("input_file")
+  flags.mark_flag_as_required("vocab_file")
+  flags.mark_flag_as_required("bert_config_file")
+  flags.mark_flag_as_required("init_checkpoint")
+  flags.mark_flag_as_required("output_file")
+  tf.app.run()
