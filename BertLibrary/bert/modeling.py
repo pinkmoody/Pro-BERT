@@ -23,4 +23,16 @@ import copy
 import json
 import math
 import re
-import
+import numpy as np
+import six
+import tensorflow as tf
+
+
+class BertConfig(object):
+  """Configuration for `BertModel`."""
+
+  def __init__(self,
+               vocab_size,
+               hidden_size=768,
+               num_hidden_layers=12,
+               num_attention_heads=1
