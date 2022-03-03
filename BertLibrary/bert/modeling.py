@@ -53,4 +53,8 @@ class BertConfig(object):
         the Transformer encoder.
       intermediate_size: The size of the "intermediate" (i.e., feed-forward)
         layer in the Transformer encoder.
-      hidden_
+      hidden_act: The non-linear activation function (function or string) in the
+        encoder and pooler.
+      hidden_dropout_prob: The dropout probability for all fully connected
+        layers in the embeddings, encoder, and pooler.
+      attention_probs_dropout_pr
