@@ -48,4 +48,9 @@ class BertConfig(object):
     Args:
       vocab_size: Vocabulary size of `inputs_ids` in `BertModel`.
       hidden_size: Size of the encoder layers and the pooler layer.
-      num_hidden_layers: Number of hidden layers in the Transformer en
+      num_hidden_layers: Number of hidden layers in the Transformer encoder.
+      num_attention_heads: Number of attention heads for each attention layer in
+        the Transformer encoder.
+      intermediate_size: The size of the "intermediate" (i.e., feed-forward)
+        layer in the Transformer encoder.
+      hidden_
