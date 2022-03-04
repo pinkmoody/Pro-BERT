@@ -57,4 +57,9 @@ class BertConfig(object):
         encoder and pooler.
       hidden_dropout_prob: The dropout probability for all fully connected
         layers in the embeddings, encoder, and pooler.
-      attention_probs_dropout_pr
+      attention_probs_dropout_prob: The dropout ratio for the attention
+        probabilities.
+      max_position_embeddings: The maximum sequence length that this model might
+        ever be used with. Typically set this to something large just in case
+        (e.g., 512 or 1024 or 2048).
+      type_vocab_size: Th
