@@ -62,4 +62,11 @@ class BertConfig(object):
       max_position_embeddings: The maximum sequence length that this model might
         ever be used with. Typically set this to something large just in case
         (e.g., 512 or 1024 or 2048).
-      type_vocab_size: Th
+      type_vocab_size: The vocabulary size of the `token_type_ids` passed into
+        `BertModel`.
+      initializer_range: The stdev of the truncated_normal_initializer for
+        initializing all weight matrices.
+    """
+    self.vocab_size = vocab_size
+    self.hidden_size = hidden_size
+    self.num_hidden_laye
