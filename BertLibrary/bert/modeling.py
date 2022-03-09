@@ -69,4 +69,9 @@ class BertConfig(object):
     """
     self.vocab_size = vocab_size
     self.hidden_size = hidden_size
-    self.num_hidden_laye
+    self.num_hidden_layers = num_hidden_layers
+    self.num_attention_heads = num_attention_heads
+    self.hidden_act = hidden_act
+    self.intermediate_size = intermediate_size
+    self.hidden_dropout_prob = hidden_dropout_prob
+    self.attention_probs_dropout_prob = attention_probs_dropout_prob
