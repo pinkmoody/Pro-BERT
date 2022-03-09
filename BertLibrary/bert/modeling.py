@@ -82,4 +82,12 @@ class BertConfig(object):
   @classmethod
   def from_dict(cls, json_object):
     """Constructs a `BertConfig` from a Python dictionary of parameters."""
-   
+    config = BertConfig(vocab_size=None)
+    for (key, value) in six.iteritems(json_object):
+      config.__dict__[key] = value
+    return config
+
+  @classmethod
+  def from_json_file(cls, json_file):
+    """Constructs a `BertConfig` from a json file of parameters."""
+    with tf.gfile.
