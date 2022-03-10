@@ -100,4 +100,14 @@ class BertConfig(object):
     return output
 
   def to_json_string(self):
-    "
+    """Serializes this instance to a JSON string."""
+    return json.dumps(self.to_dict(), indent=2, sort_keys=True) + "\n"
+
+
+class BertModel(object):
+  """BERT model ("Bidirectional Encoder Representations from Transformers").
+
+  Example usage:
+
+  ```python
+  # Already been converted into WordPiece 
