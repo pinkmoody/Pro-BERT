@@ -110,4 +110,10 @@ class BertModel(object):
   Example usage:
 
   ```python
-  # Already been converted into WordPiece 
+  # Already been converted into WordPiece token ids
+  input_ids = tf.constant([[31, 51, 99], [15, 5, 0]])
+  input_mask = tf.constant([[1, 1, 1], [1, 1, 0]])
+  token_type_ids = tf.constant([[0, 0, 1], [0, 2, 0]])
+
+  config = modeling.BertConfig(vocab_size=32000, hidden_size=512,
+    num_hidden_layers
