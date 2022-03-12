@@ -142,4 +142,7 @@ class BertModel(object):
       config: `BertConfig` instance.
       is_training: bool. true for training model, false for eval model. Controls
         whether dropout will be applied.
-      input_ids: int32 Tensor of 
+      input_ids: int32 Tensor of shape [batch_size, seq_length].
+      input_mask: (optional) int32 Tensor of shape [batch_size, seq_length].
+      token_type_ids: (optional) int32 Tensor of shape [batch_size, seq_length].
+      use_one_hot_embeddings: (optional) bool. Whether to 
