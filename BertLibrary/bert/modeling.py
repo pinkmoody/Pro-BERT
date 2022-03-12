@@ -123,4 +123,15 @@ class BertModel(object):
 
   label_embeddings = tf.get_variable(...)
   pooled_output = model.get_pooled_output()
-  logits = t
+  logits = tf.matmul(pooled_output, label_embeddings)
+  ...
+  ```
+  """
+
+  def __init__(self,
+               config,
+               is_training,
+               input_ids,
+               input_mask=None,
+               token_type_ids=None,
+               use_one_hot_embeddings=Fals
