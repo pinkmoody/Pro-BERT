@@ -145,4 +145,12 @@ class BertModel(object):
       input_ids: int32 Tensor of shape [batch_size, seq_length].
       input_mask: (optional) int32 Tensor of shape [batch_size, seq_length].
       token_type_ids: (optional) int32 Tensor of shape [batch_size, seq_length].
-      use_one_hot_embeddings: (optional) bool. Whether to 
+      use_one_hot_embeddings: (optional) bool. Whether to use one-hot word
+        embeddings or tf.embedding_lookup() for the word embeddings.
+      scope: (optional) variable scope. Defaults to "bert".
+
+    Raises:
+      ValueError: The config is invalid or one of the input tensor shapes
+        is invalid.
+    """
+    config = copy.deepcopy(
