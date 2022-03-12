@@ -134,4 +134,12 @@ class BertModel(object):
                input_ids,
                input_mask=None,
                token_type_ids=None,
-               use_one_hot_embeddings=Fals
+               use_one_hot_embeddings=False,
+               scope=None):
+    """Constructor for BertModel.
+
+    Args:
+      config: `BertConfig` instance.
+      is_training: bool. true for training model, false for eval model. Controls
+        whether dropout will be applied.
+      input_ids: int32 Tensor of 
