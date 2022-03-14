@@ -163,3 +163,10 @@ class BertModel(object):
     seq_length = input_shape[1]
 
     if input_mask is None:
+      input_mask = tf.ones(shape=[batch_size, seq_length], dtype=tf.int32)
+
+    if token_type_ids is None:
+      token_type_ids = tf.zeros(shape=[batch_size, seq_length], dtype=tf.int32)
+
+    with tf.variable_scope(scope, default_name="bert"):
+      with tf.variable_scope("emb
