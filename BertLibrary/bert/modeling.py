@@ -180,4 +180,9 @@ class BertModel(object):
             use_one_hot_embeddings=use_one_hot_embeddings)
 
         # Add positional embeddings and token type embeddings, then layer
-        # n
+        # normalize and perform dropout.
+        self.embedding_output = embedding_postprocessor(
+            input_tensor=self.embedding_output,
+            use_token_type=True,
+            token_type_ids=token_type_ids,
+            token_typ
