@@ -185,4 +185,8 @@ class BertModel(object):
             input_tensor=self.embedding_output,
             use_token_type=True,
             token_type_ids=token_type_ids,
-            token_typ
+            token_type_vocab_size=config.type_vocab_size,
+            token_type_embedding_name="token_type_embeddings",
+            use_position_embeddings=True,
+            position_embedding_name="position_embeddings",
+            initializer_range=config.initializer_r
