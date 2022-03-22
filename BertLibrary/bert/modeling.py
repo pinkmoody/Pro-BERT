@@ -195,4 +195,10 @@ class BertModel(object):
 
       with tf.variable_scope("encoder"):
         # This converts a 2D mask of shape [batch_size, seq_length] to a 3D
-        # mask of 
+        # mask of shape [batch_size, seq_length, seq_length] which is used
+        # for the attention scores.
+        attention_mask = create_attention_mask_from_input_mask(
+            input_ids, input_mask)
+
+        # Run the stacked transformer.
+        # `sequence_output` shape = [batch_size, seq_l
