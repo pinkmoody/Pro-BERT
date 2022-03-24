@@ -201,4 +201,9 @@ class BertModel(object):
             input_ids, input_mask)
 
         # Run the stacked transformer.
-        # `sequence_output` shape = [batch_size, seq_l
+        # `sequence_output` shape = [batch_size, seq_length, hidden_size].
+        self.all_encoder_layers = transformer_model(
+            input_tensor=self.embedding_output,
+            attention_mask=attention_mask,
+            hidden_size=config.hidden_size,
+            num_hidden_layers=config.num_hidd
