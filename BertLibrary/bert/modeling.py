@@ -206,4 +206,9 @@ class BertModel(object):
             input_tensor=self.embedding_output,
             attention_mask=attention_mask,
             hidden_size=config.hidden_size,
-            num_hidden_layers=config.num_hidd
+            num_hidden_layers=config.num_hidden_layers,
+            num_attention_heads=config.num_attention_heads,
+            intermediate_size=config.intermediate_size,
+            intermediate_act_fn=get_activation(config.hidden_act),
+            hidden_dropout_prob=config.hidden_dropout_prob,
+          
