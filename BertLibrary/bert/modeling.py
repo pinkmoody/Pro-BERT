@@ -211,4 +211,9 @@ class BertModel(object):
             intermediate_size=config.intermediate_size,
             intermediate_act_fn=get_activation(config.hidden_act),
             hidden_dropout_prob=config.hidden_dropout_prob,
-          
+            attention_probs_dropout_prob=config.attention_probs_dropout_prob,
+            initializer_range=config.initializer_range,
+            do_return_all_layers=True)
+
+      self.sequence_output = self.all_encoder_layers[-1]
+      # The "pooler" converts the encoded seq
