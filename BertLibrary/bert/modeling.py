@@ -232,4 +232,13 @@ class BertModel(object):
             kernel_initializer=create_initializer(config.initializer_range))
 
   def get_pooled_output(self):
-    return self.
+    return self.pooled_output
+
+  def get_sequence_output(self):
+    """Gets final hidden layer of encoder.
+
+    Returns:
+      float Tensor of shape [batch_size, seq_length, hidden_size] corresponding
+      to the final hidden of the transformer encoder.
+    """
+    return self.sequence_outpu
