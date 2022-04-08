@@ -250,4 +250,11 @@ class BertModel(object):
     """Gets output of the embedding lookup (i.e., input to the transformer).
 
     Returns:
-      float Tensor of shape [batch_size, seq_length, hidden_size] correspo
+      float Tensor of shape [batch_size, seq_length, hidden_size] corresponding
+      to the output of the embedding layer, after summing the word
+      embeddings with the positional embeddings and the token type embeddings,
+      then performing layer normalization. This is the input to the transformer.
+    """
+    return self.embedding_output
+
+ 
