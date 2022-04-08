@@ -241,4 +241,13 @@ class BertModel(object):
       float Tensor of shape [batch_size, seq_length, hidden_size] corresponding
       to the final hidden of the transformer encoder.
     """
-    return self.sequence_outpu
+    return self.sequence_output
+
+  def get_all_encoder_layers(self):
+    return self.all_encoder_layers
+
+  def get_embedding_output(self):
+    """Gets output of the embedding lookup (i.e., input to the transformer).
+
+    Returns:
+      float Tensor of shape [batch_size, seq_length, hidden_size] correspo
