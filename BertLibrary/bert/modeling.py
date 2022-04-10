@@ -281,4 +281,9 @@ def get_activation(activation_string):
   """Maps a string to a Python function, e.g., "relu" => `tf.nn.relu`.
 
   Args:
-    
+    activation_string: String name of the activation function.
+
+  Returns:
+    A Python function corresponding to the activation function. If
+    `activation_string` is None, empty, or "linear", this will return None.
+    If `activation_string` is not a string, it will return
