@@ -286,4 +286,12 @@ def get_activation(activation_string):
   Returns:
     A Python function corresponding to the activation function. If
     `activation_string` is None, empty, or "linear", this will return None.
-    If `activation_string` is not a string, it will return
+    If `activation_string` is not a string, it will return `activation_string`.
+
+  Raises:
+    ValueError: The `activation_string` does not correspond to a known
+      activation.
+  """
+
+  # We assume that anything that"s not a string is already an activation
+  # function, so we just retu
