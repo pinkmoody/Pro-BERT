@@ -294,4 +294,15 @@ def get_activation(activation_string):
   """
 
   # We assume that anything that"s not a string is already an activation
-  # function, so we just retu
+  # function, so we just return it.
+  if not isinstance(activation_string, six.string_types):
+    return activation_string
+
+  if not activation_string:
+    return None
+
+  act = activation_string.lower()
+  if act == "linear":
+    return None
+  elif act == "relu":
+    
