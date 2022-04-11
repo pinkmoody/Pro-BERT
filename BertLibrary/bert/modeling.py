@@ -305,4 +305,14 @@ def get_activation(activation_string):
   if act == "linear":
     return None
   elif act == "relu":
-    
+    return tf.nn.relu
+  elif act == "gelu":
+    return gelu
+  elif act == "tanh":
+    return tf.tanh
+  else:
+    raise ValueError("Unsupported activation: %s" % act)
+
+
+def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
+  """Compute the union of 
