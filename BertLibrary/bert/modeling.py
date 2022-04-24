@@ -335,4 +335,15 @@ def get_assignment_map_from_checkpoint(tvars, init_checkpoint):
     if name not in name_to_variable:
       continue
     assignment_map[name] = name
-    initialized_variable_names[
+    initialized_variable_names[name] = 1
+    initialized_variable_names[name + ":0"] = 1
+
+  return (assignment_map, initialized_variable_names)
+
+
+def dropout(input_tensor, dropout_prob):
+  """Perform dropout.
+
+  Args:
+    input_tensor: float Tensor.
+    dropout_prob: Python float. The probab
