@@ -370,3 +370,13 @@ def layer_norm_and_dropout(input_tensor, dropout_prob, name=None):
   output_tensor = layer_norm(input_tensor, name)
   output_tensor = dropout(output_tensor, dropout_prob)
   return output_tensor
+
+
+def create_initializer(initializer_range=0.02):
+  """Creates a `truncated_normal_initializer` with the given range."""
+  return tf.truncated_normal_initializer(stddev=initializer_range)
+
+
+def embedding_lookup(input_ids,
+                     vocab_size,
+    
