@@ -379,4 +379,11 @@ def create_initializer(initializer_range=0.02):
 
 def embedding_lookup(input_ids,
                      vocab_size,
-    
+                     embedding_size=128,
+                     initializer_range=0.02,
+                     word_embedding_name="word_embeddings",
+                     use_one_hot_embeddings=False):
+  """Looks up words embeddings for id tensor.
+
+  Args:
+    input_ids: int32 Ten
