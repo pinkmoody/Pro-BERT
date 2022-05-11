@@ -386,4 +386,9 @@ def embedding_lookup(input_ids,
   """Looks up words embeddings for id tensor.
 
   Args:
-    input_ids: int32 Ten
+    input_ids: int32 Tensor of shape [batch_size, seq_length] containing word
+      ids.
+    vocab_size: int. Size of the embedding vocabulary.
+    embedding_size: int. Width of the word embeddings.
+    initializer_range: float. Embedding initialization range.
+    word_embedding_name: str
