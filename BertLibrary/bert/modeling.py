@@ -398,4 +398,10 @@ def embedding_lookup(input_ids,
   Returns:
     float Tensor of shape [batch_size, seq_length, embedding_size].
   """
-  # This function assumes that th
+  # This function assumes that the input is of shape [batch_size, seq_length,
+  # num_inputs].
+  #
+  # If the input is a 2D tensor of shape [batch_size, seq_length], we
+  # reshape to [batch_size, seq_length, 1].
+  if input_ids.shape.ndims == 2:
+    input_ids = tf.expand_dims(input_ids, axis=[-1])
