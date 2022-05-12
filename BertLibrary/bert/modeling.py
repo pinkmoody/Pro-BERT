@@ -391,4 +391,11 @@ def embedding_lookup(input_ids,
     vocab_size: int. Size of the embedding vocabulary.
     embedding_size: int. Width of the word embeddings.
     initializer_range: float. Embedding initialization range.
-    word_embedding_name: str
+    word_embedding_name: string. Name of the embedding table.
+    use_one_hot_embeddings: bool. If True, use one-hot method for word
+      embeddings. If False, use `tf.gather()`.
+
+  Returns:
+    float Tensor of shape [batch_size, seq_length, embedding_size].
+  """
+  # This function assumes that th
