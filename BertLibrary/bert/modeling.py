@@ -421,4 +421,11 @@ def embedding_lookup(input_ids,
   input_shape = get_shape_list(input_ids)
 
   output = tf.reshape(output,
-               
+                      input_shape[0:-1] + [input_shape[-1] * embedding_size])
+  return (output, embedding_table)
+
+
+def embedding_postprocessor(input_tensor,
+                            use_token_type=False,
+                            token_type_ids=None,
+                    
