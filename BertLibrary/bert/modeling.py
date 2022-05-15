@@ -438,4 +438,9 @@ def embedding_postprocessor(input_tensor,
   """Performs various post-processing on a word embedding tensor.
 
   Args:
-    input_tensor: fl
+    input_tensor: float Tensor of shape [batch_size, seq_length,
+      embedding_size].
+    use_token_type: bool. Whether to add embeddings for `token_type_ids`.
+    token_type_ids: (optional) int32 Tensor of shape [batch_size, seq_length].
+      Must be specified if `use_token_type` is True.
+    token_typ
