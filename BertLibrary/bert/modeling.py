@@ -428,4 +428,7 @@ def embedding_lookup(input_ids,
 def embedding_postprocessor(input_tensor,
                             use_token_type=False,
                             token_type_ids=None,
-                    
+                            token_type_vocab_size=16,
+                            token_type_embedding_name="token_type_embeddings",
+                            use_position_embeddings=True,
+                            position_embedding_name="position_embeddi
