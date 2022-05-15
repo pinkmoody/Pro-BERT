@@ -443,4 +443,8 @@ def embedding_postprocessor(input_tensor,
     use_token_type: bool. Whether to add embeddings for `token_type_ids`.
     token_type_ids: (optional) int32 Tensor of shape [batch_size, seq_length].
       Must be specified if `use_token_type` is True.
-    token_typ
+    token_type_vocab_size: int. The vocabulary size of `token_type_ids`.
+    token_type_embedding_name: string. The name of the embedding table variable
+      for token type ids.
+    use_position_embeddings: bool. Whether to add position embeddings for the
+      p
