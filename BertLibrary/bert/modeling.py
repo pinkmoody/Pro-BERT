@@ -431,4 +431,11 @@ def embedding_postprocessor(input_tensor,
                             token_type_vocab_size=16,
                             token_type_embedding_name="token_type_embeddings",
                             use_position_embeddings=True,
-                            position_embedding_name="position_embeddi
+                            position_embedding_name="position_embeddings",
+                            initializer_range=0.02,
+                            max_position_embeddings=512,
+                            dropout_prob=0.1):
+  """Performs various post-processing on a word embedding tensor.
+
+  Args:
+    input_tensor: fl
