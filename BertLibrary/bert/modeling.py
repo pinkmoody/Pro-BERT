@@ -447,4 +447,8 @@ def embedding_postprocessor(input_tensor,
     token_type_embedding_name: string. The name of the embedding table variable
       for token type ids.
     use_position_embeddings: bool. Whether to add position embeddings for the
-      p
+      position of each token in the sequence.
+    position_embedding_name: string. The name of the embedding table variable
+      for positional embeddings.
+    initializer_range: float. Range of the weight initialization.
+    max_position_embeddings: int. Maximum sequence length
