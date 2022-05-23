@@ -451,4 +451,10 @@ def embedding_postprocessor(input_tensor,
     position_embedding_name: string. The name of the embedding table variable
       for positional embeddings.
     initializer_range: float. Range of the weight initialization.
-    max_position_embeddings: int. Maximum sequence length
+    max_position_embeddings: int. Maximum sequence length that might ever be
+      used with this model. This can be longer than the sequence length of
+      input_tensor, but cannot be shorter.
+    dropout_prob: float. Dropout probability applied to the final output tensor.
+
+  Returns:
+    float tensor with same shape as `inp
