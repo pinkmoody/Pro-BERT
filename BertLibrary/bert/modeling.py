@@ -457,4 +457,16 @@ def embedding_postprocessor(input_tensor,
     dropout_prob: float. Dropout probability applied to the final output tensor.
 
   Returns:
-    float tensor with same shape as `inp
+    float tensor with same shape as `input_tensor`.
+
+  Raises:
+    ValueError: One of the tensor shapes or input values is invalid.
+  """
+  input_shape = get_shape_list(input_tensor, expected_rank=3)
+  batch_size = input_shape[0]
+  seq_length = input_shape[1]
+  width = input_shape[2]
+
+  output = input_tensor
+
+  if use_to
