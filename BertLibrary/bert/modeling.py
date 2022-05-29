@@ -469,4 +469,10 @@ def embedding_postprocessor(input_tensor,
 
   output = input_tensor
 
-  if use_to
+  if use_token_type:
+    if token_type_ids is None:
+      raise ValueError("`token_type_ids` must be specified if"
+                       "`use_token_type` is True.")
+    token_type_table = tf.get_variable(
+        name=token_type_embedding_name,
+        shape=[token_type_vocab_size, wi
