@@ -483,4 +483,11 @@ def embedding_postprocessor(input_tensor,
     one_hot_ids = tf.one_hot(flat_token_type_ids, depth=token_type_vocab_size)
     token_type_embeddings = tf.matmul(one_hot_ids, token_type_table)
     token_type_embeddings = tf.reshape(token_type_embeddings,
-                                       [batc
+                                       [batch_size, seq_length, width])
+    output += token_type_embeddings
+
+  if use_position_embeddings:
+    assert_op = tf.assert_less_equal(seq_length, max_position_embeddings)
+    with tf.control_dependencies([assert_op]):
+      full_position_embeddings = tf.get_variable(
+       
