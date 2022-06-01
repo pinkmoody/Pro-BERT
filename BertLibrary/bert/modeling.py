@@ -475,4 +475,9 @@ def embedding_postprocessor(input_tensor,
                        "`use_token_type` is True.")
     token_type_table = tf.get_variable(
         name=token_type_embedding_name,
-        shape=[token_type_vocab_size, wi
+        shape=[token_type_vocab_size, width],
+        initializer=create_initializer(initializer_range))
+    # This vocab will be small so we always do one-hot here, since it is always
+    # faster for a small vocabulary.
+    flat_token_type_ids = tf.reshape(token_type_ids, [-1])
+    one_hot_i
