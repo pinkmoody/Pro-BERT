@@ -494,4 +494,9 @@ def embedding_postprocessor(input_tensor,
           shape=[max_position_embeddings, width],
           initializer=create_initializer(initializer_range))
       # Since the position embedding table is a learned variable, we create it
-      # using a (long) sequence length `max_position_
+      # using a (long) sequence length `max_position_embeddings`. The actual
+      # sequence length might be shorter than this, for faster training of
+      # tasks that do not have long sequences.
+      #
+      # So `full_position_embeddings` is effectively an embedding table
+      # for position [0, 1, 2, ..., max_position_embeddings-
