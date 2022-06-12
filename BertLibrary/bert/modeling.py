@@ -510,4 +510,9 @@ def embedding_postprocessor(input_tensor,
       # we broadcast among the first dimensions, which is typically just
       # the batch size.
       position_broadcast_shape = []
-      
+      for _ in range(num_dims - 2):
+        position_broadcast_shape.append(1)
+      position_broadcast_shape.extend([seq_length, width])
+      position_embeddings = tf.reshape(position_embeddings,
+                                       position_broadcast_shape)
+      output += position_emb
