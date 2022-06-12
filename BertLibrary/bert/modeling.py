@@ -515,4 +515,14 @@ def embedding_postprocessor(input_tensor,
       position_broadcast_shape.extend([seq_length, width])
       position_embeddings = tf.reshape(position_embeddings,
                                        position_broadcast_shape)
-      output += position_emb
+      output += position_embeddings
+
+  output = layer_norm_and_dropout(output, dropout_prob)
+  return output
+
+
+def create_attention_mask_from_input_mask(from_tensor, to_mask):
+  """Create 3D attention mask from a 2D tensor mask.
+
+  Args:
+    from_tensor: 2D or 3D Tensor of shape [batch_siz
