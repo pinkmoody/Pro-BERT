@@ -532,4 +532,13 @@ def create_attention_mask_from_input_mask(from_tensor, to_mask):
     float Tensor of shape [batch_size, from_seq_length, to_seq_length].
   """
   from_shape = get_shape_list(from_tensor, expected_rank=[2, 3])
-  batch_size = from_shape[0
+  batch_size = from_shape[0]
+  from_seq_length = from_shape[1]
+
+  to_shape = get_shape_list(to_mask, expected_rank=2)
+  to_seq_length = to_shape[1]
+
+  to_mask = tf.cast(
+      tf.reshape(to_mask, [batch_size, 1, to_seq_length]), tf.float32)
+
+  # We don't assume that `from_tensor` is a mask (although it could b
