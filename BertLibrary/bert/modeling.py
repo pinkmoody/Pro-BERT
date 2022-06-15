@@ -547,4 +547,15 @@ def create_attention_mask_from_input_mask(from_tensor, to_mask):
   #
   # `broadcast_ones` = [batch_size, from_seq_length, 1]
   broadcast_ones = tf.ones(
-      shape=[batch_size, from_seq_length, 1], dtype=tf.floa
+      shape=[batch_size, from_seq_length, 1], dtype=tf.float32)
+
+  # Here we broadcast along two dimensions to create the mask.
+  mask = broadcast_ones * to_mask
+
+  return mask
+
+
+def attention_layer(from_tensor,
+                    to_tensor,
+                    attention_mask=None,
+                    num_attention_he
