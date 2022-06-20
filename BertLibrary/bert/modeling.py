@@ -565,3 +565,10 @@ def attention_layer(from_tensor,
                     value_act=None,
                     attention_probs_dropout_prob=0.0,
                     initializer_range=0.02,
+                    do_return_2d_tensor=False,
+                    batch_size=None,
+                    from_seq_length=None,
+                    to_seq_length=None):
+  """Performs multi-headed attention from `from_tensor` to `to_tensor`.
+
+  This is an impl
