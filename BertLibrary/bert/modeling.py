@@ -558,4 +558,10 @@ def create_attention_mask_from_input_mask(from_tensor, to_mask):
 def attention_layer(from_tensor,
                     to_tensor,
                     attention_mask=None,
-                    num_attention_he
+                    num_attention_heads=1,
+                    size_per_head=512,
+                    query_act=None,
+                    key_act=None,
+                    value_act=None,
+                    attention_probs_dropout_prob=0.0,
+                    initializer_range=0.02,
