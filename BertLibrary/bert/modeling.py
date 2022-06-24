@@ -571,4 +571,7 @@ def attention_layer(from_tensor,
                     to_seq_length=None):
   """Performs multi-headed attention from `from_tensor` to `to_tensor`.
 
-  This is an impl
+  This is an implementation of multi-headed attention based on "Attention
+  is all you Need". If `from_tensor` and `to_tensor` are the same, then
+  this is self-attention. Each timestep in `from_tensor` attends to the
+  corresponding sequence in `to_tensor`, and returns a fixed
