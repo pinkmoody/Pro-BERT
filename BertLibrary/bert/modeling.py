@@ -579,4 +579,11 @@ def attention_layer(from_tensor,
   This function first projects `from_tensor` into a "query" tensor and
   `to_tensor` into "key" and "value" tensors. These are (effectively) a list
   of tensors of length `num_attention_heads`, where each tensor is of shape
-  [batch_size, seq_length, size_
+  [batch_size, seq_length, size_per_head].
+
+  Then, the query and key tensors are dot-producted and scaled. These are
+  softmaxed to obtain attention probabilities. The value tensors are then
+  interpolated by these probabilities, then concatenated back to a single
+  tensor and returned.
+
+  In prac
