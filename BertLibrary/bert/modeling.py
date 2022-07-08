@@ -586,4 +586,10 @@ def attention_layer(from_tensor,
   interpolated by these probabilities, then concatenated back to a single
   tensor and returned.
 
-  In prac
+  In practice, the multi-headed attention are done with transposes and
+  reshapes rather than actual separate tensors.
+
+  Args:
+    from_tensor: float Tensor of shape [batch_size, from_seq_length,
+      from_width].
+    to_tensor: float Tensor of shape [batch_size, to_seq_l
