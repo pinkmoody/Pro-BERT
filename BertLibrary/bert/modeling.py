@@ -596,4 +596,9 @@ def attention_layer(from_tensor,
     attention_mask: (optional) int32 Tensor of shape [batch_size,
       from_seq_length, to_seq_length]. The values should be 1 or 0. The
       attention scores will effectively be set to -infinity for any positions in
-      the mask that are 0, and will be unchanged for posi
+      the mask that are 0, and will be unchanged for positions that are 1.
+    num_attention_heads: int. Number of attention heads.
+    size_per_head: int. Size of each attention head.
+    query_act: (optional) Activation function for the query transform.
+    key_act: (optional) Activation function for the key transform.
+   
