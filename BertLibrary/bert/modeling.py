@@ -592,4 +592,8 @@ def attention_layer(from_tensor,
   Args:
     from_tensor: float Tensor of shape [batch_size, from_seq_length,
       from_width].
-    to_tensor: float Tensor of shape [batch_size, to_seq_l
+    to_tensor: float Tensor of shape [batch_size, to_seq_length, to_width].
+    attention_mask: (optional) int32 Tensor of shape [batch_size,
+      from_seq_length, to_seq_length]. The values should be 1 or 0. The
+      attention scores will effectively be set to -infinity for any positions in
+      the mask that are 0, and will be unchanged for posi
