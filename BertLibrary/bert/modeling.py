@@ -605,4 +605,8 @@ def attention_layer(from_tensor,
     attention_probs_dropout_prob: (optional) float. Dropout probability of the
       attention probabilities.
     initializer_range: float. Range of the weight initializer.
-    do_return_2d_tensor: bool. If T
+    do_return_2d_tensor: bool. If True, the output will be of shape [batch_size
+      * from_seq_length, num_attention_heads * size_per_head]. If False, the
+      output will be of shape [batch_size, from_seq_length, num_attention_heads
+      * size_per_head].
+    batch_size: (Optional) int. If the input is 2D, this mig
