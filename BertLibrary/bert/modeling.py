@@ -613,4 +613,10 @@ def attention_layer(from_tensor,
       of the 3D version of the `from_tensor` and `to_tensor`.
     from_seq_length: (Optional) If the input is 2D, this might be the seq length
       of the 3D version of the `from_tensor`.
-    to_seq_length
+    to_seq_length: (Optional) If the input is 2D, this might be the seq length
+      of the 3D version of the `to_tensor`.
+
+  Returns:
+    float Tensor of shape [batch_size, from_seq_length,
+      num_attention_heads * size_per_head]. (If `do_return_2d_tensor` is
+      true, this will be of shape [batch_size * 
