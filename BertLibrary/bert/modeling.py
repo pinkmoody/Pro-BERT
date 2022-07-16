@@ -609,4 +609,8 @@ def attention_layer(from_tensor,
       * from_seq_length, num_attention_heads * size_per_head]. If False, the
       output will be of shape [batch_size, from_seq_length, num_attention_heads
       * size_per_head].
-    batch_size: (Optional) int. If the input is 2D, this mig
+    batch_size: (Optional) int. If the input is 2D, this might be the batch size
+      of the 3D version of the `from_tensor` and `to_tensor`.
+    from_seq_length: (Optional) If the input is 2D, this might be the seq length
+      of the 3D version of the `from_tensor`.
+    to_seq_length
