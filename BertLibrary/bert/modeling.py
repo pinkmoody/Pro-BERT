@@ -635,4 +635,12 @@ def attention_layer(from_tensor,
     return output_tensor
 
   from_shape = get_shape_list(from_tensor, expected_rank=[2, 3])
-  to_shape = get_sh
+  to_shape = get_shape_list(to_tensor, expected_rank=[2, 3])
+
+  if len(from_shape) != len(to_shape):
+    raise ValueError(
+        "The rank of `from_tensor` must match the rank of `to_tensor`.")
+
+  if len(from_shape) == 3:
+    batch_size = from_shape[0]
+    from_seq_
