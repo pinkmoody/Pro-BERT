@@ -619,4 +619,13 @@ def attention_layer(from_tensor,
   Returns:
     float Tensor of shape [batch_size, from_seq_length,
       num_attention_heads * size_per_head]. (If `do_return_2d_tensor` is
-      true, this will be of shape [batch_size * 
+      true, this will be of shape [batch_size * from_seq_length,
+      num_attention_heads * size_per_head]).
+
+  Raises:
+    ValueError: Any of the arguments or tensor shapes are invalid.
+  """
+
+  def transpose_for_scores(input_tensor, batch_size, num_attention_heads,
+                           seq_length, width):
+    
