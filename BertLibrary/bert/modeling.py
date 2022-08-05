@@ -628,4 +628,11 @@ def attention_layer(from_tensor,
 
   def transpose_for_scores(input_tensor, batch_size, num_attention_heads,
                            seq_length, width):
-    
+    output_tensor = tf.reshape(
+        input_tensor, [batch_size, seq_length, num_attention_heads, width])
+
+    output_tensor = tf.transpose(output_tensor, [0, 2, 1, 3])
+    return output_tensor
+
+  from_shape = get_shape_list(from_tensor, expected_rank=[2, 3])
+  to_shape = get_sh
