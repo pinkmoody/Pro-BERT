@@ -649,4 +649,11 @@ def attention_layer(from_tensor,
     if (batch_size is None or from_seq_length is None or to_seq_length is None):
       raise ValueError(
           "When passing in rank 2 tensors to attention_layer, the values "
-      
+          "for `batch_size`, `from_seq_length`, and `to_seq_length` "
+          "must all be specified.")
+
+  # Scalar dimensions referenced here:
+  #   B = batch size (number of sequences)
+  #   F = `from_tensor` sequence length
+  #   T = `to_tensor` sequence length
+  #   N =
