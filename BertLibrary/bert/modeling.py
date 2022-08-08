@@ -643,4 +643,10 @@ def attention_layer(from_tensor,
 
   if len(from_shape) == 3:
     batch_size = from_shape[0]
-    from_seq_
+    from_seq_length = from_shape[1]
+    to_seq_length = to_shape[1]
+  elif len(from_shape) == 2:
+    if (batch_size is None or from_seq_length is None or to_seq_length is None):
+      raise ValueError(
+          "When passing in rank 2 tensors to attention_layer, the values "
+      
