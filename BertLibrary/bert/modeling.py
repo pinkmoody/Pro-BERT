@@ -673,4 +673,13 @@ def attention_layer(from_tensor,
   # `key_layer` = [B*T, N*H]
   key_layer = tf.layers.dense(
       to_tensor_2d,
-      num_attention_heads * size_per
+      num_attention_heads * size_per_head,
+      activation=key_act,
+      name="key",
+      kernel_initializer=create_initializer(initializer_range))
+
+  # `value_layer` = [B*T, N*H]
+  value_layer = tf.layers.dense(
+      to_tensor_2d,
+      num_attention_heads * size_per_head,
+      activation
