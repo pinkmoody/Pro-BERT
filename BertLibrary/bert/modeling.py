@@ -682,4 +682,10 @@ def attention_layer(from_tensor,
   value_layer = tf.layers.dense(
       to_tensor_2d,
       num_attention_heads * size_per_head,
-      activation
+      activation=value_act,
+      name="value",
+      kernel_initializer=create_initializer(initializer_range))
+
+  # `query_layer` = [B, N, F, H]
+  query_layer = transpose_for_scores(query_layer, batch_size,
+                                     num_attention_heads, from_se
