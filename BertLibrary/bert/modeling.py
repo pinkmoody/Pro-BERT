@@ -688,4 +688,11 @@ def attention_layer(from_tensor,
 
   # `query_layer` = [B, N, F, H]
   query_layer = transpose_for_scores(query_layer, batch_size,
-                                     num_attention_heads, from_se
+                                     num_attention_heads, from_seq_length,
+                                     size_per_head)
+
+  # `key_layer` = [B, N, T, H]
+  key_layer = transpose_for_scores(key_layer, batch_size, num_attention_heads,
+                                   to_seq_length, size_per_head)
+
+  # Take the dot product between "query
