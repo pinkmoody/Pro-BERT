@@ -719,4 +719,10 @@ def attention_layer(from_tensor,
   # `attention_probs` = [B, N, F, T]
   attention_probs = tf.nn.softmax(attention_scores)
 
-  # This is actually dropping out entire tokens to attend to,
+  # This is actually dropping out entire tokens to attend to, which might
+  # seem a bit unusual, but is taken from the original Transformer paper.
+  attention_probs = dropout(attention_probs, attention_probs_dropout_prob)
+
+  # `value_layer` = [B, T, N, H]
+  value_layer = tf.reshape(
+      va
