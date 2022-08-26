@@ -700,4 +700,11 @@ def attention_layer(from_tensor,
   # `attention_scores` = [B, N, F, T]
   attention_scores = tf.matmul(query_layer, key_layer, transpose_b=True)
   attention_scores = tf.multiply(attention_scores,
-                                 1.0 / math.sqrt(floa
+                                 1.0 / math.sqrt(float(size_per_head)))
+
+  if attention_mask is not None:
+    # `attention_mask` = [B, 1, F, T]
+    attention_mask = tf.expand_dims(attention_mask, axis=[1])
+
+    # Since attention_mask is 1.0 for positions we want to attend and 0.0 for
+    # masked positions, this operation will
