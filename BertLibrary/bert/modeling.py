@@ -707,4 +707,9 @@ def attention_layer(from_tensor,
     attention_mask = tf.expand_dims(attention_mask, axis=[1])
 
     # Since attention_mask is 1.0 for positions we want to attend and 0.0 for
-    # masked positions, this operation will
+    # masked positions, this operation will create a tensor which is 0.0 for
+    # positions we want to attend and -10000.0 for masked positions.
+    adder = (1.0 - tf.cast(attention_mask, tf.float32)) * -10000.0
+
+    # Since we are adding it to the raw scores before the softmax, this is
+    # effectively the same as 
