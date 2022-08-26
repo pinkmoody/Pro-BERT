@@ -712,4 +712,11 @@ def attention_layer(from_tensor,
     adder = (1.0 - tf.cast(attention_mask, tf.float32)) * -10000.0
 
     # Since we are adding it to the raw scores before the softmax, this is
-    # effectively the same as 
+    # effectively the same as removing these entirely.
+    attention_scores += adder
+
+  # Normalize the attention scores to probabilities.
+  # `attention_probs` = [B, N, F, T]
+  attention_probs = tf.nn.softmax(attention_scores)
+
+  # This is actually dropping out entire tokens to attend to,
