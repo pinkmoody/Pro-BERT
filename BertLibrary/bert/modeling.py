@@ -752,4 +752,11 @@ def attention_layer(from_tensor,
 
 
 def transformer_model(input_tensor,
-                      attention_ma
+                      attention_mask=None,
+                      hidden_size=768,
+                      num_hidden_layers=12,
+                      num_attention_heads=12,
+                      intermediate_size=3072,
+                      intermediate_act_fn=gelu,
+                      hidden_dropout_prob=0.1,
+  
