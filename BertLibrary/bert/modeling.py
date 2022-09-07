@@ -725,4 +725,13 @@ def attention_layer(from_tensor,
 
   # `value_layer` = [B, T, N, H]
   value_layer = tf.reshape(
-      va
+      value_layer,
+      [batch_size, to_seq_length, num_attention_heads, size_per_head])
+
+  # `value_layer` = [B, N, T, H]
+  value_layer = tf.transpose(value_layer, [0, 2, 1, 3])
+
+  # `context_layer` = [B, N, F, H]
+  context_layer = tf.matmul(attention_probs, value_layer)
+
+  # `c
