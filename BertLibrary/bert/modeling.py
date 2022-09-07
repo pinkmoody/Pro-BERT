@@ -741,4 +741,15 @@ def attention_layer(from_tensor,
     # `context_layer` = [B*F, N*H]
     context_layer = tf.reshape(
         context_layer,
-        [batch_size * from_seq_length, num_attention_heads * size_per_head
+        [batch_size * from_seq_length, num_attention_heads * size_per_head])
+  else:
+    # `context_layer` = [B, F, N*H]
+    context_layer = tf.reshape(
+        context_layer,
+        [batch_size, from_seq_length, num_attention_heads * size_per_head])
+
+  return context_layer
+
+
+def transformer_model(input_tensor,
+                      attention_ma
