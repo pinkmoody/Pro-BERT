@@ -759,4 +759,9 @@ def transformer_model(input_tensor,
                       intermediate_size=3072,
                       intermediate_act_fn=gelu,
                       hidden_dropout_prob=0.1,
-  
+                      attention_probs_dropout_prob=0.1,
+                      initializer_range=0.02,
+                      do_return_all_layers=False):
+  """Multi-headed, multi-layer Transformer from "Attention is All You Need".
+
+  This is almost an exact implementation of the orig
