@@ -764,4 +764,13 @@ def transformer_model(input_tensor,
                       do_return_all_layers=False):
   """Multi-headed, multi-layer Transformer from "Attention is All You Need".
 
-  This is almost an exact implementation of the orig
+  This is almost an exact implementation of the original Transformer encoder.
+
+  See the original paper:
+  https://arxiv.org/abs/1706.03762
+
+  Also see:
+  https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/transformer.py
+
+  Args:
+    input_tensor: float Tensor of shape [batch_s
