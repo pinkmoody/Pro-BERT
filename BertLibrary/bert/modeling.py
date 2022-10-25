@@ -773,4 +773,8 @@ def transformer_model(input_tensor,
   https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/models/transformer.py
 
   Args:
-    input_tensor: float Tensor of shape [batch_s
+    input_tensor: float Tensor of shape [batch_size, seq_length, hidden_size].
+    attention_mask: (optional) int32 Tensor of shape [batch_size, seq_length,
+      seq_length], with 1 for positions that can be attended to and 0 in
+      positions that should not be.
+    hidden_size: int. Hidden size of the Tr
