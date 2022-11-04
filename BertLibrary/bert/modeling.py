@@ -777,4 +777,9 @@ def transformer_model(input_tensor,
     attention_mask: (optional) int32 Tensor of shape [batch_size, seq_length,
       seq_length], with 1 for positions that can be attended to and 0 in
       positions that should not be.
-    hidden_size: int. Hidden size of the Tr
+    hidden_size: int. Hidden size of the Transformer.
+    num_hidden_layers: int. Number of layers (blocks) in the Transformer.
+    num_attention_heads: int. Number of attention heads in the Transformer.
+    intermediate_size: int. The size of the "intermediate" (a.k.a., feed
+      forward) layer.
+    intermedi
