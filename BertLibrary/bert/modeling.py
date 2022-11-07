@@ -782,4 +782,7 @@ def transformer_model(input_tensor,
     num_attention_heads: int. Number of attention heads in the Transformer.
     intermediate_size: int. The size of the "intermediate" (a.k.a., feed
       forward) layer.
-    intermedi
+    intermediate_act_fn: function. The non-linear activation function to apply
+      to the output of the intermediate/feed-forward layer.
+    hidden_dropout_prob: float. Dropout probability for the hidden layers.
+    attention_probs_dropout_prob: float. Dropout probability of the attention
