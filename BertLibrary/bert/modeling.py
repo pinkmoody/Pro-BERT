@@ -786,3 +786,11 @@ def transformer_model(input_tensor,
       to the output of the intermediate/feed-forward layer.
     hidden_dropout_prob: float. Dropout probability for the hidden layers.
     attention_probs_dropout_prob: float. Dropout probability of the attention
+      probabilities.
+    initializer_range: float. Range of the initializer (stddev of truncated
+      normal).
+    do_return_all_layers: Whether to also return all layers or just the final
+      layer.
+
+  Returns:
+    float Tensor of shape [batch_size, seq_lengt
