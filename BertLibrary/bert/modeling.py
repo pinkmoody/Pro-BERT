@@ -793,4 +793,12 @@ def transformer_model(input_tensor,
       layer.
 
   Returns:
-    float Tensor of shape [batch_size, seq_lengt
+    float Tensor of shape [batch_size, seq_length, hidden_size], the final
+    hidden layer of the Transformer.
+
+  Raises:
+    ValueError: A Tensor shape or parameter is invalid.
+  """
+  if hidden_size % num_attention_heads != 0:
+    raise ValueError(
+        "The hidden size (%d) is not a multiple of the numbe
