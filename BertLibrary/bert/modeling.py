@@ -801,4 +801,10 @@ def transformer_model(input_tensor,
   """
   if hidden_size % num_attention_heads != 0:
     raise ValueError(
-        "The hidden size (%d) is not a multiple of the numbe
+        "The hidden size (%d) is not a multiple of the number of attention "
+        "heads (%d)" % (hidden_size, num_attention_heads))
+
+  attention_head_size = int(hidden_size / num_attention_heads)
+  input_shape = get_shape_list(input_tensor, expected_rank=3)
+  batch_size = input_shape[0]
+  seq_length = input_sh
