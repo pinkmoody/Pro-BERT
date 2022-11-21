@@ -807,4 +807,11 @@ def transformer_model(input_tensor,
   attention_head_size = int(hidden_size / num_attention_heads)
   input_shape = get_shape_list(input_tensor, expected_rank=3)
   batch_size = input_shape[0]
-  seq_length = input_sh
+  seq_length = input_shape[1]
+  input_width = input_shape[2]
+
+  # The Transformer performs sum residuals on all layers so the input needs
+  # to be the same as the hidden size.
+  if input_width != hidden_size:
+    raise ValueError("The width of the input tensor (%d) != hidden size (%d)" %
+               
