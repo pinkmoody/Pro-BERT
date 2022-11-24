@@ -819,4 +819,13 @@ def transformer_model(input_tensor,
   # We keep the representation as a 2D tensor to avoid re-shaping it back and
   # forth from a 3D tensor to a 2D tensor. Re-shapes are normally free on
   # the GPU/CPU but may not be free on the TPU, so we want to minimize them to
-  # help the op
+  # help the optimizer.
+  prev_output = reshape_to_matrix(input_tensor)
+
+  all_layer_outputs = []
+  for layer_idx in range(num_hidden_layers):
+    with tf.variable_scope("layer_%d" % layer_idx):
+      layer_input = prev_output
+
+      with tf.variable_scope("attention"):
+        attention_heads =
