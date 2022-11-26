@@ -828,4 +828,10 @@ def transformer_model(input_tensor,
       layer_input = prev_output
 
       with tf.variable_scope("attention"):
-        attention_heads =
+        attention_heads = []
+        with tf.variable_scope("self"):
+          attention_head = attention_layer(
+              from_tensor=layer_input,
+              to_tensor=layer_input,
+              attention_mask=attention_mask,
+              num_attention_heads=num_at
