@@ -834,4 +834,10 @@ def transformer_model(input_tensor,
               from_tensor=layer_input,
               to_tensor=layer_input,
               attention_mask=attention_mask,
-              num_attention_heads=num_at
+              num_attention_heads=num_attention_heads,
+              size_per_head=attention_head_size,
+              attention_probs_dropout_prob=attention_probs_dropout_prob,
+              initializer_range=initializer_range,
+              do_return_2d_tensor=True,
+              batch_size=batch_size,
+              f
