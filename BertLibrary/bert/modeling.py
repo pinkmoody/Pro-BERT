@@ -840,4 +840,11 @@ def transformer_model(input_tensor,
               initializer_range=initializer_range,
               do_return_2d_tensor=True,
               batch_size=batch_size,
-              f
+              from_seq_length=seq_length,
+              to_seq_length=seq_length)
+          attention_heads.append(attention_head)
+
+        attention_output = None
+        if len(attention_heads) == 1:
+          attention_output = attention_heads[0]
+  
