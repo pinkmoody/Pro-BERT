@@ -847,4 +847,9 @@ def transformer_model(input_tensor,
         attention_output = None
         if len(attention_heads) == 1:
           attention_output = attention_heads[0]
-  
+        else:
+          # In the case where we have other sequences, we just concatenate
+          # them to the self-attention head before the projection.
+          attention_output = tf.concat(attention_heads, axis=-1)
+
+        # Run a linear projection of `hidden_size`
