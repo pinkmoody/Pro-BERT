@@ -863,4 +863,11 @@ def transformer_model(input_tensor,
           attention_output = layer_norm(attention_output + layer_input)
 
       # The activation is only applied to the "intermediate" hidden layer.
-      with tf.variable_scope("interme
+      with tf.variable_scope("intermediate"):
+        intermediate_output = tf.layers.dense(
+            attention_output,
+            intermediate_size,
+            activation=intermediate_act_fn,
+            kernel_initializer=create_initializer(initializer_range))
+
+  
