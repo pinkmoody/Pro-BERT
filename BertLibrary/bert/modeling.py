@@ -852,4 +852,10 @@ def transformer_model(input_tensor,
           # them to the self-attention head before the projection.
           attention_output = tf.concat(attention_heads, axis=-1)
 
-        # Run a linear projection of `hidden_size`
+        # Run a linear projection of `hidden_size` then add a residual
+        # with `layer_input`.
+        with tf.variable_scope("output"):
+          attention_output = tf.layers.dense(
+              attention_output,
+              hidden_size,
+              kernel_initializer=create_initializer(initializer_
