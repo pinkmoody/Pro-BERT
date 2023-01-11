@@ -875,4 +875,11 @@ def transformer_model(input_tensor,
         layer_output = tf.layers.dense(
             intermediate_output,
             hidden_size,
-            kernel_initializer=create
+            kernel_initializer=create_initializer(initializer_range))
+        layer_output = dropout(layer_output, hidden_dropout_prob)
+        layer_output = layer_norm(layer_output + attention_output)
+        prev_output = layer_output
+        all_layer_outputs.append(layer_output)
+
+  if do_return_all_layers:
+    fina
