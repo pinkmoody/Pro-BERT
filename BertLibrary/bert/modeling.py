@@ -882,4 +882,10 @@ def transformer_model(input_tensor,
         all_layer_outputs.append(layer_output)
 
   if do_return_all_layers:
-    fina
+    final_outputs = []
+    for layer_output in all_layer_outputs:
+      final_output = reshape_from_matrix(layer_output, input_shape)
+      final_outputs.append(final_output)
+    return final_outputs
+  else:
+    final_output = reshape_fr
