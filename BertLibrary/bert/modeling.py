@@ -888,4 +888,13 @@ def transformer_model(input_tensor,
       final_outputs.append(final_output)
     return final_outputs
   else:
-    final_output = reshape_fr
+    final_output = reshape_from_matrix(prev_output, input_shape)
+    return final_output
+
+
+def get_shape_list(tensor, expected_rank=None, name=None):
+  """Returns a list of the shape of tensor, preferring static dimensions.
+
+  Args:
+    tensor: A tf.Tensor object to find the shape of.
+    expected_ran
