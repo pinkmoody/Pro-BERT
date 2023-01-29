@@ -897,4 +897,10 @@ def get_shape_list(tensor, expected_rank=None, name=None):
 
   Args:
     tensor: A tf.Tensor object to find the shape of.
-    expected_ran
+    expected_rank: (optional) int. The expected rank of `tensor`. If this is
+      specified and the `tensor` has a different rank, and exception will be
+      thrown.
+    name: Optional name of the tensor for the error message.
+
+  Returns:
+    A li
