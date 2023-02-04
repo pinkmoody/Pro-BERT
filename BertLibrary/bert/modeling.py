@@ -903,4 +903,12 @@ def get_shape_list(tensor, expected_rank=None, name=None):
     name: Optional name of the tensor for the error message.
 
   Returns:
-    A li
+    A list of dimensions of the shape of tensor. All static dimensions will
+    be returned as python integers, and dynamic dimensions will be returned
+    as tf.Tensor scalars.
+  """
+  if name is None:
+    name = tensor.name
+
+  if expected_rank is not None:
+    assert_rank(tenso
