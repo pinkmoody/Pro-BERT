@@ -911,4 +911,17 @@ def get_shape_list(tensor, expected_rank=None, name=None):
     name = tensor.name
 
   if expected_rank is not None:
-    assert_rank(tenso
+    assert_rank(tensor, expected_rank, name)
+
+  shape = tensor.shape.as_list()
+
+  non_static_indexes = []
+  for (index, dim) in enumerate(shape):
+    if dim is None:
+      non_static_indexes.append(index)
+
+  if not non_static_indexes:
+    return shape
+
+  dyn_shape = tf.shape(tensor)
+  for index 
