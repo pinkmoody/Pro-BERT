@@ -924,4 +924,13 @@ def get_shape_list(tensor, expected_rank=None, name=None):
     return shape
 
   dyn_shape = tf.shape(tensor)
-  for index 
+  for index in non_static_indexes:
+    shape[index] = dyn_shape[index]
+  return shape
+
+
+def reshape_to_matrix(input_tensor):
+  """Reshapes a >= rank 2 tensor to a rank 2 tensor (i.e., a matrix)."""
+  ndims = input_tensor.shape.ndims
+  if ndims < 2:
+    raise ValueError("
