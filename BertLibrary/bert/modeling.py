@@ -943,4 +943,12 @@ def reshape_to_matrix(input_tensor):
   return output_tensor
 
 
-def reshape_from_m
+def reshape_from_matrix(output_tensor, orig_shape_list):
+  """Reshapes a rank 2 tensor back to its original rank >= 2 tensor."""
+  if len(orig_shape_list) == 2:
+    return output_tensor
+
+  output_shape = get_shape_list(output_tensor)
+
+  orig_dims = orig_shape_list[0:-1]
+  
