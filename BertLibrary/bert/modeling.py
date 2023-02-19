@@ -933,4 +933,14 @@ def reshape_to_matrix(input_tensor):
   """Reshapes a >= rank 2 tensor to a rank 2 tensor (i.e., a matrix)."""
   ndims = input_tensor.shape.ndims
   if ndims < 2:
-    raise ValueError("
+    raise ValueError("Input tensor must have at least rank 2. Shape = %s" %
+                     (input_tensor.shape))
+  if ndims == 2:
+    return input_tensor
+
+  width = input_tensor.shape[-1]
+  output_tensor = tf.reshape(input_tensor, [-1, width])
+  return output_tensor
+
+
+def reshape_from_m
