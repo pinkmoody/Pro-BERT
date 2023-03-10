@@ -951,4 +951,14 @@ def reshape_from_matrix(output_tensor, orig_shape_list):
   output_shape = get_shape_list(output_tensor)
 
   orig_dims = orig_shape_list[0:-1]
-  
+  width = output_shape[-1]
+
+  return tf.reshape(output_tensor, orig_dims + [width])
+
+
+def assert_rank(tensor, expected_rank, name=None):
+  """Raises an exception if the tensor rank is not of the expected rank.
+
+  Args:
+    tensor: A tf.Tensor to check the rank of.
+    expected_ra
