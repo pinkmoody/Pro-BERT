@@ -970,4 +970,12 @@ def assert_rank(tensor, expected_rank, name=None):
   if name is None:
     name = tensor.name
 
-  expected_
+  expected_rank_dict = {}
+  if isinstance(expected_rank, six.integer_types):
+    expected_rank_dict[expected_rank] = True
+  else:
+    for x in expected_rank:
+      expected_rank_dict[x] = True
+
+  actual_rank = tensor.shape.ndims
+  if actual_rank not in expected_
