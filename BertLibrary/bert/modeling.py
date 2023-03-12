@@ -961,4 +961,13 @@ def assert_rank(tensor, expected_rank, name=None):
 
   Args:
     tensor: A tf.Tensor to check the rank of.
-    expected_ra
+    expected_rank: Python integer or list of integers, expected rank.
+    name: Optional name of the tensor for the error message.
+
+  Raises:
+    ValueError: If the expected shape doesn't match the actual shape.
+  """
+  if name is None:
+    name = tensor.name
+
+  expected_
