@@ -202,3 +202,77 @@ class BertModelTest(tf.test.TestCase):
     for op in graph.get_operations():
       for x in op.inputs:
         op_to_all[op.name].append(x.name)
+      for y in op.outputs:
+        output_to_op[y.name].append(op.name)
+        op_to_all[op.name].append(y.name)
+      if str(op.type) == "Assign":
+        for y in op.outputs:
+          for x in op.inputs:
+            assign_out_to_in[y.name].append(x.name)
+
+    assign_groups = collections.defaultdict(list)
+    for out_name in assign_out_to_in.keys():
+      name_group = assign_out_to_in[out_name]
+      for n1 in name_group:
+        assign_groups[n1].append(out_name)
+        for n2 in name_group:
+          if n1 != n2:
+            assign_groups[n1].append(n2)
+
+    seen_tensors = {}
+    stack = [x.name for x in outputs]
+    while stack:
+      name = stack.pop()
+      if name in seen_tensors:
+        continue
+      seen_tensors[name] = True
+
+      if name in output_to_op:
+        for op_name in output_to_op[name]:
+          if op_name in op_to_all:
+            for input_name in op_to_all[op_name]:
+              if input_name not in stack:
+                stack.append(input_name)
+
+      expanded_names = []
+      if name in assign_groups:
+        for assign_name in assign_groups[name]:
+          expanded_names.append(assign_name)
+
+      for expanded_name in expanded_names:
+        if expanded_name not in stack:
+          stack.append(expanded_name)
+
+    unreachable_ops = []
+    for op in graph.get_operations():
+      is_unreachable = False
+      all_names = [x.name for x in op.inputs] + [x.name for x in op.outputs]
+      for name in all_names:
+        if name not in seen_tensors:
+          is_unreachable = True
+      if is_unreachable:
+        unreachable_ops.append(op)
+    return unreachable_ops
+
+  @classmethod
+  def flatten_recursive(cls, item):
+    """Flattens (potentially nested) a tuple/dictionary/list to a list."""
+    output = []
+    if isinstance(item, list):
+      output.extend(item)
+    elif isinstance(item, tuple):
+      output.extend(list(item))
+    elif isinstance(item, dict):
+      for (_, v) in six.iteritems(item):
+        output.append(v)
+    else:
+      return [item]
+
+    flat_output = []
+    for x in output:
+      flat_output.extend(cls.flatten_recursive(x))
+    return flat_output
+
+
+if __name__ == "__main__":
+  tf.test.main()
