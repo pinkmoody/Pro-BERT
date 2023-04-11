@@ -195,3 +195,110 @@ any ambiguity introduced by stripping accent markers.
 ### List of Languages
 
 The multilingual model supports the following languages. These languages were
+chosen because they are the top 100 languages with the largest Wikipedias:
+
+*   Afrikaans
+*   Albanian
+*   Arabic
+*   Aragonese
+*   Armenian
+*   Asturian
+*   Azerbaijani
+*   Bashkir
+*   Basque
+*   Bavarian
+*   Belarusian
+*   Bengali
+*   Bishnupriya Manipuri
+*   Bosnian
+*   Breton
+*   Bulgarian
+*   Burmese
+*   Catalan
+*   Cebuano
+*   Chechen
+*   Chinese (Simplified)
+*   Chinese (Traditional)
+*   Chuvash
+*   Croatian
+*   Czech
+*   Danish
+*   Dutch
+*   English
+*   Estonian
+*   Finnish
+*   French
+*   Galician
+*   Georgian
+*   German
+*   Greek
+*   Gujarati
+*   Haitian
+*   Hebrew
+*   Hindi
+*   Hungarian
+*   Icelandic
+*   Ido
+*   Indonesian
+*   Irish
+*   Italian
+*   Japanese
+*   Javanese
+*   Kannada
+*   Kazakh
+*   Kirghiz
+*   Korean
+*   Latin
+*   Latvian
+*   Lithuanian
+*   Lombard
+*   Low Saxon
+*   Luxembourgish
+*   Macedonian
+*   Malagasy
+*   Malay
+*   Malayalam
+*   Marathi
+*   Minangkabau
+*   Nepali
+*   Newar
+*   Norwegian (Bokmal)
+*   Norwegian (Nynorsk)
+*   Occitan
+*   Persian (Farsi)
+*   Piedmontese
+*   Polish
+*   Portuguese
+*   Punjabi
+*   Romanian
+*   Russian
+*   Scots
+*   Serbian
+*   Serbo-Croatian
+*   Sicilian
+*   Slovak
+*   Slovenian
+*   South Azerbaijani
+*   Spanish
+*   Sundanese
+*   Swahili
+*   Swedish
+*   Tagalog
+*   Tajik
+*   Tamil
+*   Tatar
+*   Telugu
+*   Turkish
+*   Ukrainian
+*   Urdu
+*   Uzbek
+*   Vietnamese
+*   Volapük
+*   Waray-Waray
+*   Welsh
+*   West Frisian
+*   Western Punjabi
+*   Yoruba
+
+The **Multilingual Cased (New)** release contains additionally **Thai** and
+**Mongolian**, which were not included in the original release.
