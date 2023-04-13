@@ -163,3 +163,13 @@ class AdamWeightDecayOptimizer(tf.train.Optimizer):
       return False
     if self.exclude_from_weight_decay:
       for r in self.exclude_from_weight_decay:
+        if re.search(r, param_name) is not None:
+          return False
+    return True
+
+  def _get_variable_name(self, param_name):
+    """Get the variable name from the tensor name."""
+    m = re.match("^(.*):\\d+$", param_name)
+    if m is not None:
+      param_name = m.group(1)
+    return param_name
