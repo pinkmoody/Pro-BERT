@@ -17,4 +17,14 @@ from __future__ import division
 from __future__ import print_function
 
 import optimization
-import
+import tensorflow as tf
+
+
+class OptimizationTest(tf.test.TestCase):
+
+  def test_adam(self):
+    with self.test_session() as sess:
+      w = tf.get_variable(
+          "w",
+          shape=[3],
+          initializer=tf.constant_initializer([0.
