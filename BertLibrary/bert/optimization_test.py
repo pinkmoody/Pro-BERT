@@ -27,4 +27,10 @@ class OptimizationTest(tf.test.TestCase):
       w = tf.get_variable(
           "w",
           shape=[3],
-          initializer=tf.constant_initializer([0.
+          initializer=tf.constant_initializer([0.1, -0.2, -0.1]))
+      x = tf.constant([0.4, 0.2, -0.5])
+      loss = tf.reduce_mean(tf.square(x - w))
+      tvars = tf.trainable_variables()
+      grads = tf.gradients(loss, tvars)
+      global_step = tf.train.get_or_create_global_step()
+      optimizer = optimizatio
