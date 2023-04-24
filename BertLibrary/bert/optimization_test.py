@@ -33,4 +33,9 @@ class OptimizationTest(tf.test.TestCase):
       tvars = tf.trainable_variables()
       grads = tf.gradients(loss, tvars)
       global_step = tf.train.get_or_create_global_step()
-      optimizer = optimizatio
+      optimizer = optimization.AdamWeightDecayOptimizer(learning_rate=0.2)
+      train_op = optimizer.apply_gradients(zip(grads, tvars), global_step)
+      init_op = tf.group(tf.global_variables_initializer(),
+                         tf.local_variables_initializer())
+      sess.run(init_op)
+      f
