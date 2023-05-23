@@ -28,3 +28,12 @@ import tensorflow_hub as hub
 flags = tf.flags
 
 FLAGS = flags.FLAGS
+
+flags.DEFINE_string(
+    "bert_hub_module_handle", None,
+    "Handle for the BERT TF-Hub module.")
+
+
+def create_model(is_training, input_ids, input_mask, segment_ids, labels,
+                 num_labels, bert_hub_module_handle):
+  """Creates a classif
