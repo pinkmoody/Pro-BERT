@@ -44,4 +44,14 @@ def create_model(is_training, input_ids, input_mask, segment_ids, labels,
   bert_inputs = dict(
       input_ids=input_ids,
       input_mask=input_mask,
-      segment_ids=se
+      segment_ids=segment_ids)
+  bert_outputs = bert_module(
+      inputs=bert_inputs,
+      signature="tokens",
+      as_dict=True)
+
+  # In the demo, we are doing a simple classification task on the entire
+  # segment.
+  #
+  # If you want to use the token-level output, use
+  # bert_outpu
