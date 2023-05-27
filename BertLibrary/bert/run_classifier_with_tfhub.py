@@ -54,4 +54,11 @@ def create_model(is_training, input_ids, input_mask, segment_ids, labels,
   # segment.
   #
   # If you want to use the token-level output, use
-  # bert_outpu
+  # bert_outputs["sequence_output"] instead.
+  output_layer = bert_outputs["pooled_output"]
+
+  hidden_size = output_layer.shape[-1].value
+
+  output_weights = tf.get_variable(
+      "output_weights", [num_labels, hidden_size],
+      initializer=tf.truncated_normal_i
