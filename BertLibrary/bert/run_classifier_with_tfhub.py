@@ -61,4 +61,12 @@ def create_model(is_training, input_ids, input_mask, segment_ids, labels,
 
   output_weights = tf.get_variable(
       "output_weights", [num_labels, hidden_size],
-      initializer=tf.truncated_normal_i
+      initializer=tf.truncated_normal_initializer(stddev=0.02))
+
+  output_bias = tf.get_variable(
+      "output_bias", [num_labels], initializer=tf.zeros_initializer())
+
+  with tf.variable_scope("loss"):
+    if is_training:
+      # I.e., 0.1 dropout
+      output_layer = tf.nn.dropout(output_layer, 
