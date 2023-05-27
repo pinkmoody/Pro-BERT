@@ -36,4 +36,12 @@ flags.DEFINE_string(
 
 def create_model(is_training, input_ids, input_mask, segment_ids, labels,
                  num_labels, bert_hub_module_handle):
-  """Creates a classif
+  """Creates a classification model."""
+  tags = set()
+  if is_training:
+    tags.add("train")
+  bert_module = hub.Module(bert_hub_module_handle, tags=tags, trainable=True)
+  bert_inputs = dict(
+      input_ids=input_ids,
+      input_mask=input_mask,
+      segment_ids=se
