@@ -85,4 +85,10 @@ def create_model(is_training, input_ids, input_mask, segment_ids, labels,
 
 
 def model_fn_builder(num_labels, learning_rate, num_train_steps,
- 
+                     num_warmup_steps, use_tpu, bert_hub_module_handle):
+  """Returns `model_fn` closure for TPUEstimator."""
+
+  def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
+    """The `model_fn` for TPUEstimator."""
+
+    tf.logging.
