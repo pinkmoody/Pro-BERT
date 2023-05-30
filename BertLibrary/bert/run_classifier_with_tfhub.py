@@ -97,4 +97,11 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
 
     input_ids = features["input_ids"]
     input_mask = features["input_mask"]
-    segment_ids = features["segme
+    segment_ids = features["segment_ids"]
+    label_ids = features["label_ids"]
+
+    is_training = (mode == tf.estimator.ModeKeys.TRAIN)
+
+    (total_loss, per_example_loss, logits, probabilities) = create_model(
+        is_training, input_ids, input_mask, segment_ids, label_ids, num_labels,
+    
