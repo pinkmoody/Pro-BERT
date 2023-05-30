@@ -91,4 +91,10 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
   def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
     """The `model_fn` for TPUEstimator."""
 
-    tf.logging.
+    tf.logging.info("*** Features ***")
+    for name in sorted(features.keys()):
+      tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
+
+    input_ids = features["input_ids"]
+    input_mask = features["input_mask"]
+    segment_ids = features["segme
