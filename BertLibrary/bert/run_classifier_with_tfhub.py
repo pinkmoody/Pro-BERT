@@ -104,4 +104,11 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
 
     (total_loss, per_example_loss, logits, probabilities) = create_model(
         is_training, input_ids, input_mask, segment_ids, label_ids, num_labels,
-    
+        bert_hub_module_handle)
+
+    output_spec = None
+    if mode == tf.estimator.ModeKeys.TRAIN:
+      train_op = optimization.create_optimizer(
+          total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
+
+      output_spe
