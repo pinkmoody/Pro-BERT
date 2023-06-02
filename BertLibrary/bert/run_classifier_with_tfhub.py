@@ -111,4 +111,11 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
       train_op = optimization.create_optimizer(
           total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
-      output_spe
+      output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+          mode=mode,
+          loss=total_loss,
+          train_op=train_op)
+    elif mode == tf.estimator.ModeKeys.EVAL:
+
+      def metric_fn(per_example_loss, label_ids, logits):
+        predictions = tf.argmax(logits, a
