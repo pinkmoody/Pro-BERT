@@ -118,4 +118,12 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
     elif mode == tf.estimator.ModeKeys.EVAL:
 
       def metric_fn(per_example_loss, label_ids, logits):
-        predictions = tf.argmax(logits, a
+        predictions = tf.argmax(logits, axis=-1, output_type=tf.int32)
+        accuracy = tf.metrics.accuracy(label_ids, predictions)
+        loss = tf.metrics.mean(per_example_loss)
+        return {
+            "eval_accuracy": accuracy,
+            "eval_loss": loss,
+        }
+
+     
