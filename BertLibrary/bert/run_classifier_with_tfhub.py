@@ -126,4 +126,10 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
             "eval_loss": loss,
         }
 
-     
+      eval_metrics = (metric_fn, [per_example_loss, label_ids, logits])
+      output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+          mode=mode,
+          loss=total_loss,
+          eval_metrics=eval_metrics)
+    elif mode == tf.estimator.ModeKeys.PREDICT:
+      output_spec = tf.contrib.t
