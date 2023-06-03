@@ -143,3 +143,8 @@ def model_fn_builder(num_labels, learning_rate, num_train_steps,
   return model_fn
 
 
+def create_tokenizer_from_hub_module(bert_hub_module_handle):
+  """Get the vocab file and casing info from the Hub module."""
+  with tf.Graph().as_default():
+    bert_module = hub.Module(bert_hub_module_handle)
+    tokenization_info = bert_module(s
