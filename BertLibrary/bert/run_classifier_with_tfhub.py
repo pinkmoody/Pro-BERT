@@ -151,3 +151,14 @@ def create_tokenizer_from_hub_module(bert_hub_module_handle):
     with tf.Session() as sess:
       vocab_file, do_lower_case = sess.run([tokenization_info["vocab_file"],
                                             tokenization_info["do_lower_case"]])
+  return tokenization.FullTokenizer(
+      vocab_file=vocab_file, do_lower_case=do_lower_case)
+
+
+def main(_):
+  tf.logging.set_verbosity(tf.logging.INFO)
+
+  processors = {
+      "cola": run_classifier.ColaProcessor,
+      "mnli": run_classifier.MnliProcessor,
+      "
