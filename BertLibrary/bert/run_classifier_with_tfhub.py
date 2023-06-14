@@ -161,4 +161,14 @@ def main(_):
   processors = {
       "cola": run_classifier.ColaProcessor,
       "mnli": run_classifier.MnliProcessor,
-      "
+      "mrpc": run_classifier.MrpcProcessor,
+  }
+
+  if not FLAGS.do_train and not FLAGS.do_eval:
+    raise ValueError("At least one of `do_train` or `do_eval` must be True.")
+
+  tf.gfile.MakeDirs(FLAGS.output_dir)
+
+  task_name = FLAGS.task_name.lower()
+
+  if task_n
