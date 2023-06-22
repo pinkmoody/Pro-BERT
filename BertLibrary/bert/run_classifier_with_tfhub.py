@@ -171,4 +171,14 @@ def main(_):
 
   task_name = FLAGS.task_name.lower()
 
-  if task_n
+  if task_name not in processors:
+    raise ValueError("Task not found: %s" % (task_name))
+
+  processor = processors[task_name]()
+
+  label_list = processor.get_labels()
+
+  tokenizer = create_tokenizer_from_hub_module(FLAGS.bert_hub_module_handle)
+
+  tpu_cluster_resolver = None
+ 
