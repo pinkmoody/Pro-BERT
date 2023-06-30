@@ -207,4 +207,10 @@ def main(_):
 
   model_fn = model_fn_builder(
       num_labels=len(label_list),
-    
+      learning_rate=FLAGS.learning_rate,
+      num_train_steps=num_train_steps,
+      num_warmup_steps=num_warmup_steps,
+      use_tpu=FLAGS.use_tpu,
+      bert_hub_module_handle=FLAGS.bert_hub_module_handle)
+
+  # If TPU is not available, this will fall ba
