@@ -240,4 +240,10 @@ def main(_):
   if FLAGS.do_eval:
     eval_examples = processor.get_dev_examples(FLAGS.data_dir)
     eval_features = run_classifier.convert_examples_to_features(
-        eval_examples, label_li
+        eval_examples, label_list, FLAGS.max_seq_length, tokenizer)
+
+    tf.logging.info("***** Running evaluation *****")
+    tf.logging.info("  Num examples = %d", len(eval_examples))
+    tf.logging.info("  Batch size = %d", FLAGS.eval_batch_size)
+
+    # This tells the estimator to run through the entire set.
