@@ -221,4 +221,10 @@ def main(_):
       config=run_config,
       train_batch_size=FLAGS.train_batch_size,
       eval_batch_size=FLAGS.eval_batch_size,
-      pred
+      predict_batch_size=FLAGS.predict_batch_size)
+
+  if FLAGS.do_train:
+    train_features = run_classifier.convert_examples_to_features(
+        train_examples, label_list, FLAGS.max_seq_length, tokenizer)
+    tf.logging.info("***** Running training *****")
+    tf.logging.info("  Num examples = %d"
