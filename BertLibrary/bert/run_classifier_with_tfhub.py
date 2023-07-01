@@ -233,4 +233,11 @@ def main(_):
     train_input_fn = run_classifier.input_fn_builder(
         features=train_features,
         seq_length=FLAGS.max_seq_length,
-        is_t
+        is_training=True,
+        drop_remainder=True)
+    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
+
+  if FLAGS.do_eval:
+    eval_examples = processor.get_dev_examples(FLAGS.data_dir)
+    eval_features = run_classifier.convert_examples_to_features(
+        eval_examples, label_li
