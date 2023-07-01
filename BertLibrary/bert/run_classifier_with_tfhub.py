@@ -227,4 +227,10 @@ def main(_):
     train_features = run_classifier.convert_examples_to_features(
         train_examples, label_list, FLAGS.max_seq_length, tokenizer)
     tf.logging.info("***** Running training *****")
-    tf.logging.info("  Num examples = %d"
+    tf.logging.info("  Num examples = %d", len(train_examples))
+    tf.logging.info("  Batch size = %d", FLAGS.train_batch_size)
+    tf.logging.info("  Num steps = %d", num_train_steps)
+    train_input_fn = run_classifier.input_fn_builder(
+        features=train_features,
+        seq_length=FLAGS.max_seq_length,
+        is_t
