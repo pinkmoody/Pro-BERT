@@ -247,3 +247,10 @@ def main(_):
     tf.logging.info("  Batch size = %d", FLAGS.eval_batch_size)
 
     # This tells the estimator to run through the entire set.
+    eval_steps = None
+    # However, if running eval on the TPU, you will need to specify the
+    # number of steps.
+    if FLAGS.use_tpu:
+      # Eval will be slightly WRONG on the TPU because it will truncate
+      # the last batch.
+      eval_steps = int(len(eval_
