@@ -253,4 +253,11 @@ def main(_):
     if FLAGS.use_tpu:
       # Eval will be slightly WRONG on the TPU because it will truncate
       # the last batch.
-      eval_steps = int(len(eval_
+      eval_steps = int(len(eval_examples) / FLAGS.eval_batch_size)
+
+    eval_drop_remainder = True if FLAGS.use_tpu else False
+    eval_input_fn = run_classifier.input_fn_builder(
+        features=eval_features,
+        seq_length=FLAGS.max_seq_length,
+        is_training=False,
+        dr
