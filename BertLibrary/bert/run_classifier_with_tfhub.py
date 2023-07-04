@@ -260,4 +260,10 @@ def main(_):
         features=eval_features,
         seq_length=FLAGS.max_seq_length,
         is_training=False,
-        dr
+        drop_remainder=eval_drop_remainder)
+
+    result = estimator.evaluate(input_fn=eval_input_fn, steps=eval_steps)
+
+    output_eval_file = os.path.join(FLAGS.output_dir, "eval_results.txt")
+    with tf.gfile.GFile(output_eval_file, "w") as writer:
+      tf.logging.info("*****
