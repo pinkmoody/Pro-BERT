@@ -285,4 +285,12 @@ def main(_):
 
     tf.logging.info("***** Running prediction*****")
     tf.logging.info("  Num examples = %d", len(predict_examples))
-    tf.logging.info("  Batch si
+    tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
+
+    predict_input_fn = run_classifier.file_based_input_fn_builder(
+        input_file=predict_file,
+        seq_length=FLAGS.max_seq_length,
+        is_training=False,
+        drop_remainder=FLAGS.use_tpu)
+
+    result = estimator.predict(input_fn=p
