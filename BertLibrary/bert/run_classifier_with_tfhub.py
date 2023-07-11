@@ -273,4 +273,10 @@ def main(_):
 
   if FLAGS.do_predict:
     predict_examples = processor.get_test_examples(FLAGS.data_dir)
-    if F
+    if FLAGS.use_tpu:
+      # Discard batch remainder if running on TPU
+      n = len(predict_examples)
+      predict_examples = predict_examples[:(n - n % FLAGS.predict_batch_size)]
+
+    predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
+    run_classifier.fil
