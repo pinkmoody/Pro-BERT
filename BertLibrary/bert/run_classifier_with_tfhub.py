@@ -279,4 +279,10 @@ def main(_):
       predict_examples = predict_examples[:(n - n % FLAGS.predict_batch_size)]
 
     predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
-    run_classifier.fil
+    run_classifier.file_based_convert_examples_to_features(
+        predict_examples, label_list, FLAGS.max_seq_length, tokenizer,
+        predict_file)
+
+    tf.logging.info("***** Running prediction*****")
+    tf.logging.info("  Num examples = %d", len(predict_examples))
+    tf.logging.info("  Batch si
