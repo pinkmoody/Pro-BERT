@@ -299,4 +299,13 @@ def main(_):
     with tf.gfile.GFile(output_predict_file, "w") as writer:
       tf.logging.info("***** Predict results *****")
       for prediction in result:
-        probabilities = prediction["p
+        probabilities = prediction["probabilities"]
+        output_line = "\t".join(
+            str(class_probability)
+            for class_probability in probabilities) + "\n"
+        writer.write(output_line)
+
+
+if __name__ == "__main__":
+  flags.mark_flag_as_required("data_dir")
+  flags.mark_
