@@ -421,3 +421,276 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
           end_position = 0
         else:
           doc_offset = len(query_tokens) + 2
+          start_position = tok_start_position - doc_start + doc_offset
+          end_position = tok_end_position - doc_start + doc_offset
+
+      if is_training and example.is_impossible:
+        start_position = 0
+        end_position = 0
+
+      if example_index < 20:
+        tf.logging.info("*** Example ***")
+        tf.logging.info("unique_id: %s" % (unique_id))
+        tf.logging.info("example_index: %s" % (example_index))
+        tf.logging.info("doc_span_index: %s" % (doc_span_index))
+        tf.logging.info("tokens: %s" % " ".join(
+            [tokenization.printable_text(x) for x in tokens]))
+        tf.logging.info("token_to_orig_map: %s" % " ".join(
+            ["%d:%d" % (x, y) for (x, y) in six.iteritems(token_to_orig_map)]))
+        tf.logging.info("token_is_max_context: %s" % " ".join([
+            "%d:%s" % (x, y) for (x, y) in six.iteritems(token_is_max_context)
+        ]))
+        tf.logging.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
+        tf.logging.info(
+            "input_mask: %s" % " ".join([str(x) for x in input_mask]))
+        tf.logging.info(
+            "segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
+        if is_training and example.is_impossible:
+          tf.logging.info("impossible example")
+        if is_training and not example.is_impossible:
+          answer_text = " ".join(tokens[start_position:(end_position + 1)])
+          tf.logging.info("start_position: %d" % (start_position))
+          tf.logging.info("end_position: %d" % (end_position))
+          tf.logging.info(
+              "answer: %s" % (tokenization.printable_text(answer_text)))
+
+      feature = InputFeatures(
+          unique_id=unique_id,
+          example_index=example_index,
+          doc_span_index=doc_span_index,
+          tokens=tokens,
+          token_to_orig_map=token_to_orig_map,
+          token_is_max_context=token_is_max_context,
+          input_ids=input_ids,
+          input_mask=input_mask,
+          segment_ids=segment_ids,
+          start_position=start_position,
+          end_position=end_position,
+          is_impossible=example.is_impossible)
+
+      # Run callback
+      output_fn(feature)
+
+      unique_id += 1
+
+
+def _improve_answer_span(doc_tokens, input_start, input_end, tokenizer,
+                         orig_answer_text):
+  """Returns tokenized answer spans that better match the annotated answer."""
+
+  # The SQuAD annotations are character based. We first project them to
+  # whitespace-tokenized words. But then after WordPiece tokenization, we can
+  # often find a "better match". For example:
+  #
+  #   Question: What year was John Smith born?
+  #   Context: The leader was John Smith (1895-1943).
+  #   Answer: 1895
+  #
+  # The original whitespace-tokenized answer will be "(1895-1943).". However
+  # after tokenization, our tokens will be "( 1895 - 1943 ) .". So we can match
+  # the exact answer, 1895.
+  #
+  # However, this is not always possible. Consider the following:
+  #
+  #   Question: What country is the top exporter of electornics?
+  #   Context: The Japanese electronics industry is the lagest in the world.
+  #   Answer: Japan
+  #
+  # In this case, the annotator chose "Japan" as a character sub-span of
+  # the word "Japanese". Since our WordPiece tokenizer does not split
+  # "Japanese", we just use "Japanese" as the annotation. This is fairly rare
+  # in SQuAD, but does happen.
+  tok_answer_text = " ".join(tokenizer.tokenize(orig_answer_text))
+
+  for new_start in range(input_start, input_end + 1):
+    for new_end in range(input_end, new_start - 1, -1):
+      text_span = " ".join(doc_tokens[new_start:(new_end + 1)])
+      if text_span == tok_answer_text:
+        return (new_start, new_end)
+
+  return (input_start, input_end)
+
+
+def _check_is_max_context(doc_spans, cur_span_index, position):
+  """Check if this is the 'max context' doc span for the token."""
+
+  # Because of the sliding window approach taken to scoring documents, a single
+  # token can appear in multiple documents. E.g.
+  #  Doc: the man went to the store and bought a gallon of milk
+  #  Span A: the man went to the
+  #  Span B: to the store and bought
+  #  Span C: and bought a gallon of
+  #  ...
+  #
+  # Now the word 'bought' will have two scores from spans B and C. We only
+  # want to consider the score with "maximum context", which we define as
+  # the *minimum* of its left and right context (the *sum* of left and
+  # right context will always be the same, of course).
+  #
+  # In the example the maximum context for 'bought' would be span C since
+  # it has 1 left context and 3 right context, while span B has 4 left context
+  # and 0 right context.
+  best_score = None
+  best_span_index = None
+  for (span_index, doc_span) in enumerate(doc_spans):
+    end = doc_span.start + doc_span.length - 1
+    if position < doc_span.start:
+      continue
+    if position > end:
+      continue
+    num_left_context = position - doc_span.start
+    num_right_context = end - position
+    score = min(num_left_context, num_right_context) + 0.01 * doc_span.length
+    if best_score is None or score > best_score:
+      best_score = score
+      best_span_index = span_index
+
+  return cur_span_index == best_span_index
+
+
+def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
+                 use_one_hot_embeddings):
+  """Creates a classification model."""
+  model = modeling.BertModel(
+      config=bert_config,
+      is_training=is_training,
+      input_ids=input_ids,
+      input_mask=input_mask,
+      token_type_ids=segment_ids,
+      use_one_hot_embeddings=use_one_hot_embeddings)
+
+  final_hidden = model.get_sequence_output()
+
+  final_hidden_shape = modeling.get_shape_list(final_hidden, expected_rank=3)
+  batch_size = final_hidden_shape[0]
+  seq_length = final_hidden_shape[1]
+  hidden_size = final_hidden_shape[2]
+
+  output_weights = tf.get_variable(
+      "cls/squad/output_weights", [2, hidden_size],
+      initializer=tf.truncated_normal_initializer(stddev=0.02))
+
+  output_bias = tf.get_variable(
+      "cls/squad/output_bias", [2], initializer=tf.zeros_initializer())
+
+  final_hidden_matrix = tf.reshape(final_hidden,
+                                   [batch_size * seq_length, hidden_size])
+  logits = tf.matmul(final_hidden_matrix, output_weights, transpose_b=True)
+  logits = tf.nn.bias_add(logits, output_bias)
+
+  logits = tf.reshape(logits, [batch_size, seq_length, 2])
+  logits = tf.transpose(logits, [2, 0, 1])
+
+  unstacked_logits = tf.unstack(logits, axis=0)
+
+  (start_logits, end_logits) = (unstacked_logits[0], unstacked_logits[1])
+
+  return (start_logits, end_logits)
+
+
+def model_fn_builder(bert_config, init_checkpoint, learning_rate,
+                     num_train_steps, num_warmup_steps, use_tpu,
+                     use_one_hot_embeddings):
+  """Returns `model_fn` closure for TPUEstimator."""
+
+  def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
+    """The `model_fn` for TPUEstimator."""
+
+    tf.logging.info("*** Features ***")
+    for name in sorted(features.keys()):
+      tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
+
+    unique_ids = features["unique_ids"]
+    input_ids = features["input_ids"]
+    input_mask = features["input_mask"]
+    segment_ids = features["segment_ids"]
+
+    is_training = (mode == tf.estimator.ModeKeys.TRAIN)
+
+    (start_logits, end_logits) = create_model(
+        bert_config=bert_config,
+        is_training=is_training,
+        input_ids=input_ids,
+        input_mask=input_mask,
+        segment_ids=segment_ids,
+        use_one_hot_embeddings=use_one_hot_embeddings)
+
+    tvars = tf.trainable_variables()
+
+    initialized_variable_names = {}
+    scaffold_fn = None
+    if init_checkpoint:
+      (assignment_map, initialized_variable_names
+      ) = modeling.get_assignment_map_from_checkpoint(tvars, init_checkpoint)
+      if use_tpu:
+
+        def tpu_scaffold():
+          tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+          return tf.train.Scaffold()
+
+        scaffold_fn = tpu_scaffold
+      else:
+        tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+
+    tf.logging.info("**** Trainable Variables ****")
+    for var in tvars:
+      init_string = ""
+      if var.name in initialized_variable_names:
+        init_string = ", *INIT_FROM_CKPT*"
+      tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
+                      init_string)
+
+    output_spec = None
+    if mode == tf.estimator.ModeKeys.TRAIN:
+      seq_length = modeling.get_shape_list(input_ids)[1]
+
+      def compute_loss(logits, positions):
+        one_hot_positions = tf.one_hot(
+            positions, depth=seq_length, dtype=tf.float32)
+        log_probs = tf.nn.log_softmax(logits, axis=-1)
+        loss = -tf.reduce_mean(
+            tf.reduce_sum(one_hot_positions * log_probs, axis=-1))
+        return loss
+
+      start_positions = features["start_positions"]
+      end_positions = features["end_positions"]
+
+      start_loss = compute_loss(start_logits, start_positions)
+      end_loss = compute_loss(end_logits, end_positions)
+
+      total_loss = (start_loss + end_loss) / 2.0
+
+      train_op = optimization.create_optimizer(
+          total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
+
+      output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+          mode=mode,
+          loss=total_loss,
+          train_op=train_op,
+          scaffold_fn=scaffold_fn)
+    elif mode == tf.estimator.ModeKeys.PREDICT:
+      predictions = {
+          "unique_ids": unique_ids,
+          "start_logits": start_logits,
+          "end_logits": end_logits,
+      }
+      output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+          mode=mode, predictions=predictions, scaffold_fn=scaffold_fn)
+    else:
+      raise ValueError(
+          "Only TRAIN and PREDICT modes are supported: %s" % (mode))
+
+    return output_spec
+
+  return model_fn
+
+
+def input_fn_builder(input_file, seq_length, is_training, drop_remainder):
+  """Creates an `input_fn` closure to be passed to TPUEstimator."""
+
+  name_to_features = {
+      "unique_ids": tf.FixedLenFeature([], tf.int64),
+      "input_ids": tf.FixedLenFeature([seq_length], tf.int64),
+      "input_mask": tf.FixedLenFeature([seq_length], tf.int64),
+      "segment_ids": tf.FixedLenFeature([seq_length], tf.int64),
+  }
