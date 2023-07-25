@@ -927,3 +927,267 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
 def get_final_text(pred_text, orig_text, do_lower_case):
   """Project the tokenized prediction back to the original text."""
+
+  # When we created the data, we kept track of the alignment between original
+  # (whitespace tokenized) tokens and our WordPiece tokenized tokens. So
+  # now `orig_text` contains the span of our original text corresponding to the
+  # span that we predicted.
+  #
+  # However, `orig_text` may contain extra characters that we don't want in
+  # our prediction.
+  #
+  # For example, let's say:
+  #   pred_text = steve smith
+  #   orig_text = Steve Smith's
+  #
+  # We don't want to return `orig_text` because it contains the extra "'s".
+  #
+  # We don't want to return `pred_text` because it's already been normalized
+  # (the SQuAD eval script also does punctuation stripping/lower casing but
+  # our tokenizer does additional normalization like stripping accent
+  # characters).
+  #
+  # What we really want to return is "Steve Smith".
+  #
+  # Therefore, we have to apply a semi-complicated alignment heruistic between
+  # `pred_text` and `orig_text` to get a character-to-charcter alignment. This
+  # can fail in certain cases in which case we just return `orig_text`.
+
+  def _strip_spaces(text):
+    ns_chars = []
+    ns_to_s_map = collections.OrderedDict()
+    for (i, c) in enumerate(text):
+      if c == " ":
+        continue
+      ns_to_s_map[len(ns_chars)] = i
+      ns_chars.append(c)
+    ns_text = "".join(ns_chars)
+    return (ns_text, ns_to_s_map)
+
+  # We first tokenize `orig_text`, strip whitespace from the result
+  # and `pred_text`, and check if they are the same length. If they are
+  # NOT the same length, the heuristic has failed. If they are the same
+  # length, we assume the characters are one-to-one aligned.
+  tokenizer = tokenization.BasicTokenizer(do_lower_case=do_lower_case)
+
+  tok_text = " ".join(tokenizer.tokenize(orig_text))
+
+  start_position = tok_text.find(pred_text)
+  if start_position == -1:
+    if FLAGS.verbose_logging:
+      tf.logging.info(
+          "Unable to find text: '%s' in '%s'" % (pred_text, orig_text))
+    return orig_text
+  end_position = start_position + len(pred_text) - 1
+
+  (orig_ns_text, orig_ns_to_s_map) = _strip_spaces(orig_text)
+  (tok_ns_text, tok_ns_to_s_map) = _strip_spaces(tok_text)
+
+  if len(orig_ns_text) != len(tok_ns_text):
+    if FLAGS.verbose_logging:
+      tf.logging.info("Length not equal after stripping spaces: '%s' vs '%s'",
+                      orig_ns_text, tok_ns_text)
+    return orig_text
+
+  # We then project the characters in `pred_text` back to `orig_text` using
+  # the character-to-character alignment.
+  tok_s_to_ns_map = {}
+  for (i, tok_index) in six.iteritems(tok_ns_to_s_map):
+    tok_s_to_ns_map[tok_index] = i
+
+  orig_start_position = None
+  if start_position in tok_s_to_ns_map:
+    ns_start_position = tok_s_to_ns_map[start_position]
+    if ns_start_position in orig_ns_to_s_map:
+      orig_start_position = orig_ns_to_s_map[ns_start_position]
+
+  if orig_start_position is None:
+    if FLAGS.verbose_logging:
+      tf.logging.info("Couldn't map start position")
+    return orig_text
+
+  orig_end_position = None
+  if end_position in tok_s_to_ns_map:
+    ns_end_position = tok_s_to_ns_map[end_position]
+    if ns_end_position in orig_ns_to_s_map:
+      orig_end_position = orig_ns_to_s_map[ns_end_position]
+
+  if orig_end_position is None:
+    if FLAGS.verbose_logging:
+      tf.logging.info("Couldn't map end position")
+    return orig_text
+
+  output_text = orig_text[orig_start_position:(orig_end_position + 1)]
+  return output_text
+
+
+def _get_best_indexes(logits, n_best_size):
+  """Get the n-best logits from a list."""
+  index_and_score = sorted(enumerate(logits), key=lambda x: x[1], reverse=True)
+
+  best_indexes = []
+  for i in range(len(index_and_score)):
+    if i >= n_best_size:
+      break
+    best_indexes.append(index_and_score[i][0])
+  return best_indexes
+
+
+def _compute_softmax(scores):
+  """Compute softmax probability over raw logits."""
+  if not scores:
+    return []
+
+  max_score = None
+  for score in scores:
+    if max_score is None or score > max_score:
+      max_score = score
+
+  exp_scores = []
+  total_sum = 0.0
+  for score in scores:
+    x = math.exp(score - max_score)
+    exp_scores.append(x)
+    total_sum += x
+
+  probs = []
+  for score in exp_scores:
+    probs.append(score / total_sum)
+  return probs
+
+
+class FeatureWriter(object):
+  """Writes InputFeature to TF example file."""
+
+  def __init__(self, filename, is_training):
+    self.filename = filename
+    self.is_training = is_training
+    self.num_features = 0
+    self._writer = tf.python_io.TFRecordWriter(filename)
+
+  def process_feature(self, feature):
+    """Write a InputFeature to the TFRecordWriter as a tf.train.Example."""
+    self.num_features += 1
+
+    def create_int_feature(values):
+      feature = tf.train.Feature(
+          int64_list=tf.train.Int64List(value=list(values)))
+      return feature
+
+    features = collections.OrderedDict()
+    features["unique_ids"] = create_int_feature([feature.unique_id])
+    features["input_ids"] = create_int_feature(feature.input_ids)
+    features["input_mask"] = create_int_feature(feature.input_mask)
+    features["segment_ids"] = create_int_feature(feature.segment_ids)
+
+    if self.is_training:
+      features["start_positions"] = create_int_feature([feature.start_position])
+      features["end_positions"] = create_int_feature([feature.end_position])
+      impossible = 0
+      if feature.is_impossible:
+        impossible = 1
+      features["is_impossible"] = create_int_feature([impossible])
+
+    tf_example = tf.train.Example(features=tf.train.Features(feature=features))
+    self._writer.write(tf_example.SerializeToString())
+
+  def close(self):
+    self._writer.close()
+
+
+def validate_flags_or_throw(bert_config):
+  """Validate the input FLAGS or throw an exception."""
+  tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
+                                                FLAGS.init_checkpoint)
+
+  if not FLAGS.do_train and not FLAGS.do_predict:
+    raise ValueError("At least one of `do_train` or `do_predict` must be True.")
+
+  if FLAGS.do_train:
+    if not FLAGS.train_file:
+      raise ValueError(
+          "If `do_train` is True, then `train_file` must be specified.")
+  if FLAGS.do_predict:
+    if not FLAGS.predict_file:
+      raise ValueError(
+          "If `do_predict` is True, then `predict_file` must be specified.")
+
+  if FLAGS.max_seq_length > bert_config.max_position_embeddings:
+    raise ValueError(
+        "Cannot use sequence length %d because the BERT model "
+        "was only trained up to sequence length %d" %
+        (FLAGS.max_seq_length, bert_config.max_position_embeddings))
+
+  if FLAGS.max_seq_length <= FLAGS.max_query_length + 3:
+    raise ValueError(
+        "The max_seq_length (%d) must be greater than max_query_length "
+        "(%d) + 3" % (FLAGS.max_seq_length, FLAGS.max_query_length))
+
+
+def main(_):
+  tf.logging.set_verbosity(tf.logging.INFO)
+
+  bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
+
+  validate_flags_or_throw(bert_config)
+
+  tf.gfile.MakeDirs(FLAGS.output_dir)
+
+  tokenizer = tokenization.FullTokenizer(
+      vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+
+  tpu_cluster_resolver = None
+  if FLAGS.use_tpu and FLAGS.tpu_name:
+    tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
+        FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
+
+  is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
+  run_config = tf.contrib.tpu.RunConfig(
+      cluster=tpu_cluster_resolver,
+      master=FLAGS.master,
+      model_dir=FLAGS.output_dir,
+      save_checkpoints_steps=FLAGS.save_checkpoints_steps,
+      tpu_config=tf.contrib.tpu.TPUConfig(
+          iterations_per_loop=FLAGS.iterations_per_loop,
+          num_shards=FLAGS.num_tpu_cores,
+          per_host_input_for_training=is_per_host))
+
+  train_examples = None
+  num_train_steps = None
+  num_warmup_steps = None
+  if FLAGS.do_train:
+    train_examples = read_squad_examples(
+        input_file=FLAGS.train_file, is_training=True)
+    num_train_steps = int(
+        len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
+    num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
+
+    # Pre-shuffle the input to avoid having to make a very large shuffle
+    # buffer in in the `input_fn`.
+    rng = random.Random(12345)
+    rng.shuffle(train_examples)
+
+  model_fn = model_fn_builder(
+      bert_config=bert_config,
+      init_checkpoint=FLAGS.init_checkpoint,
+      learning_rate=FLAGS.learning_rate,
+      num_train_steps=num_train_steps,
+      num_warmup_steps=num_warmup_steps,
+      use_tpu=FLAGS.use_tpu,
+      use_one_hot_embeddings=FLAGS.use_tpu)
+
+  # If TPU is not available, this will fall back to normal Estimator on CPU
+  # or GPU.
+  estimator = tf.contrib.tpu.TPUEstimator(
+      use_tpu=FLAGS.use_tpu,
+      model_fn=model_fn,
+      config=run_config,
+      train_batch_size=FLAGS.train_batch_size,
+      predict_batch_size=FLAGS.predict_batch_size)
+
+  if FLAGS.do_train:
+    # We write to a temporary file to avoid storing very large constant tensors
+    # in memory.
+    train_writer = FeatureWriter(
+        filename=os.path.join(FLAGS.output_dir, "train.tf_record"),
+        is_training=True)
