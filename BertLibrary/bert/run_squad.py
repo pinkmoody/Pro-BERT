@@ -1191,3 +1191,94 @@ def main(_):
     train_writer = FeatureWriter(
         filename=os.path.join(FLAGS.output_dir, "train.tf_record"),
         is_training=True)
+    convert_examples_to_features(
+        examples=train_examples,
+        tokenizer=tokenizer,
+        max_seq_length=FLAGS.max_seq_length,
+        doc_stride=FLAGS.doc_stride,
+        max_query_length=FLAGS.max_query_length,
+        is_training=True,
+        output_fn=train_writer.process_feature)
+    train_writer.close()
+
+    tf.logging.info("***** Running training *****")
+    tf.logging.info("  Num orig examples = %d", len(train_examples))
+    tf.logging.info("  Num split examples = %d", train_writer.num_features)
+    tf.logging.info("  Batch size = %d", FLAGS.train_batch_size)
+    tf.logging.info("  Num steps = %d", num_train_steps)
+    del train_examples
+
+    train_input_fn = input_fn_builder(
+        input_file=train_writer.filename,
+        seq_length=FLAGS.max_seq_length,
+        is_training=True,
+        drop_remainder=True)
+    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
+
+  if FLAGS.do_predict:
+    eval_examples = read_squad_examples(
+        input_file=FLAGS.predict_file, is_training=False)
+
+    eval_writer = FeatureWriter(
+        filename=os.path.join(FLAGS.output_dir, "eval.tf_record"),
+        is_training=False)
+    eval_features = []
+
+    def append_feature(feature):
+      eval_features.append(feature)
+      eval_writer.process_feature(feature)
+
+    convert_examples_to_features(
+        examples=eval_examples,
+        tokenizer=tokenizer,
+        max_seq_length=FLAGS.max_seq_length,
+        doc_stride=FLAGS.doc_stride,
+        max_query_length=FLAGS.max_query_length,
+        is_training=False,
+        output_fn=append_feature)
+    eval_writer.close()
+
+    tf.logging.info("***** Running predictions *****")
+    tf.logging.info("  Num orig examples = %d", len(eval_examples))
+    tf.logging.info("  Num split examples = %d", len(eval_features))
+    tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
+
+    all_results = []
+
+    predict_input_fn = input_fn_builder(
+        input_file=eval_writer.filename,
+        seq_length=FLAGS.max_seq_length,
+        is_training=False,
+        drop_remainder=False)
+
+    # If running eval on the TPU, you will need to specify the number of
+    # steps.
+    all_results = []
+    for result in estimator.predict(
+        predict_input_fn, yield_single_examples=True):
+      if len(all_results) % 1000 == 0:
+        tf.logging.info("Processing example: %d" % (len(all_results)))
+      unique_id = int(result["unique_ids"])
+      start_logits = [float(x) for x in result["start_logits"].flat]
+      end_logits = [float(x) for x in result["end_logits"].flat]
+      all_results.append(
+          RawResult(
+              unique_id=unique_id,
+              start_logits=start_logits,
+              end_logits=end_logits))
+
+    output_prediction_file = os.path.join(FLAGS.output_dir, "predictions.json")
+    output_nbest_file = os.path.join(FLAGS.output_dir, "nbest_predictions.json")
+    output_null_log_odds_file = os.path.join(FLAGS.output_dir, "null_odds.json")
+
+    write_predictions(eval_examples, eval_features, all_results,
+                      FLAGS.n_best_size, FLAGS.max_answer_length,
+                      FLAGS.do_lower_case, output_prediction_file,
+                      output_nbest_file, output_null_log_odds_file)
+
+
+if __name__ == "__main__":
+  flags.mark_flag_as_required("vocab_file")
+  flags.mark_flag_as_required("bert_config_file")
+  flags.mark_flag_as_required("output_dir")
+  tf.app.run()
