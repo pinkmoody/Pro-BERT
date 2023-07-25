@@ -1,3 +1,5 @@
 This text is included to make sure Unicode is handled properly: 力加勝北区ᴵᴺᵀᵃছজটডণত
 Text should be one-sentence-per-line, with empty lines between documents.
-This sample text i
+This sample text is public domain and was randomly selected from Project Guttenberg.
+
+The rain had only ceased with the gray streaks of morning at Blazing Star, and the settlement awoke to a moral sense of cleanliness, and the finding of forgotten knives, tin cups, and smaller camp utensils, where the heavy 
