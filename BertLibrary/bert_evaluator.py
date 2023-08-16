@@ -22,4 +22,12 @@ class BertEvaluator:
     def evaluate(self, X, y, checkpoint=None):
         test_examples = self.processor.get_examples(X, y)
 
-        
+        test_features = convert_examples_to_features(test_examples,
+            self.model.labels,
+            self.model.max_seq_len,
+            self.model.tokenizer)
+
+        test_input_fn = input_fn_builder(
+            features=test_features,
+            seq_length=self.model.max_seq_len,
+            i
