@@ -15,4 +15,11 @@ class BertEvaluator:
         examples = self.processor.file_get_examples(data_path)
         file_based_convert_examples_to_features(examples,
                                                 self.model.labels,
-                                            
+                                                self.model.max_seq_len,
+                                                self.model.tokenizer,
+                                                output_file)
+
+    def evaluate(self, X, y, checkpoint=None):
+        test_examples = self.processor.get_examples(X, y)
+
+        
