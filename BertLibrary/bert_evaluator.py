@@ -30,4 +30,11 @@ class BertEvaluator:
         test_input_fn = input_fn_builder(
             features=test_features,
             seq_length=self.model.max_seq_len,
-            i
+            is_training=False,
+            drop_remainder=False)
+
+        self.model.estimator.evaluate(
+          test_input_fn, checkpoint_path=checkpoint, hooks=[self.logging_hook])
+
+    def evaluate_from_file(self, data_path, checkpoint=None):
+        test_file = os.path.join(data
