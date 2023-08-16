@@ -37,4 +37,11 @@ class BertEvaluator:
           test_input_fn, checkpoint_path=checkpoint, hooks=[self.logging_hook])
 
     def evaluate_from_file(self, data_path, checkpoint=None):
-        test_file = os.path.join(data
+        test_file = os.path.join(data_path, 'test.tsv')
+        processed_test_file = os.path.join(data_path, 'test.tf-record')
+
+        if not os.path.exists(test_file) and not os.path.exists(processed_test_file):
+            raise 'test file missing'
+
+        if not os.path.exists(processed_test_file):
+            self.convert
