@@ -44,4 +44,12 @@ class BertEvaluator:
             raise 'test file missing'
 
         if not os.path.exists(processed_test_file):
-            self.convert
+            self.convert_features(test_file, processed_test_file)
+
+        eval_input_fn = file_based_input_fn_builder(
+            input_file=processed_test_file,
+            seq_length=self.model.max_seq_len,
+            is_training=False,
+            drop_remainder=False)
+
+        self.model.estimator.e
