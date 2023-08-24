@@ -63,4 +63,14 @@ class LoggingSessionHook(tf.train.SessionRunHook):
         self.model = model
         self.iter_steps = iter_steps
 
-    # ini
+    # init ops
+    def begin(self):
+        self.iterations = 0
+
+    # print every k iteration evaluations steps
+    def after_run(self, run_context, run_values):
+        self.iterations += 1
+
+        if self.iterations % self.iter_steps == 0:
+            tf.logging.info(
+   
