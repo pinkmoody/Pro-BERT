@@ -73,4 +73,6 @@ class LoggingSessionHook(tf.train.SessionRunHook):
 
         if self.iterations % self.iter_steps == 0:
             tf.logging.info(
-   
+              'Reached iteration %s, processed %s sentences', 
+              self.iterations, self.iterations * self.model.batch_size)
+
