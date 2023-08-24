@@ -52,4 +52,15 @@ class BertEvaluator:
             is_training=False,
             drop_remainder=False)
 
-        self.model.estimator.e
+        self.model.estimator.evaluate(
+          eval_input_fn, checkpoint_path=checkpoint, hooks=[self.logging_hook])
+
+
+
+class LoggingSessionHook(tf.train.SessionRunHook):
+
+    def __init__(self, model, iter_steps):
+        self.model = model
+        self.iter_steps = iter_steps
+
+    # ini
