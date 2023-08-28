@@ -12,4 +12,13 @@ class BertPredictor:
         self.bs = self.processor.batch_size
 
     def __call__(self, sentences):
-    
+        return self.predict_key(sentences, self.processor.key)
+
+    def predict_key(self, sentences, key):
+        iterations = math.ceil(len(sentences) / self.bs)
+
+        predictions = []
+        i = 0
+
+        while i < iterations:
+            next_batch = sentences[i*self.bs:
