@@ -37,4 +37,10 @@ class BertPredictor:
 
         while i < iterations:
             next_batch = sentences[i*self.bs:(i+1)*self.bs]
-            next_batch = self.processo
+            next_batch = self.processor.preprocess_sentences(next_batch)
+            y_ = self.predictor(next_batch)
+            y_ = [v for _, v in y_.items()]
+            predictions.append(y_)
+            i += 1
+
+        return np.vstack(predictions)
