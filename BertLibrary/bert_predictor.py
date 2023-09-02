@@ -29,4 +29,12 @@ class BertPredictor:
 
         return np.vstack(predictions)
 
-    def predict_all_keys(self, sentences
+    def predict_all_keys(self, sentences):
+        iterations = math.ceil(len(sentences) / self.bs)
+
+        predictions = []
+        i = 0
+
+        while i < iterations:
+            next_batch = sentences[i*self.bs:(i+1)*self.bs]
+            next_batch = self.processo
