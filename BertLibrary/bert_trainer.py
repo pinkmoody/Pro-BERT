@@ -14,4 +14,9 @@ class BertTrainer():
     def convert_features(self, data_path, output_file):
         examples = self.processor.file_get_examples(data_path)
         file_based_convert_examples_to_features(examples,
-                                                self.model.
+                                                self.model.labels,
+                                                self.model.max_seq_len,
+                                                self.model.tokenizer,
+                                                output_file)
+
+    def train(self, X, y, steps, X_val=None, y_v
