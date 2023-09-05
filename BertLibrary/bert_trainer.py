@@ -25,4 +25,13 @@ class BertTrainer():
         train_features = convert_examples_to_features(train_examples,
             self.model.labels,
             self.model.max_seq_len,
-            self.model.tok
+            self.model.tokenizer)
+
+        train_input_fn = input_fn_builder(
+            features=train_features,
+            seq_length=self.model.max_seq_len,
+            is_training=True,
+            drop_remainder=False)
+
+        if X_val and y_val:
+            dev_examples = self.
