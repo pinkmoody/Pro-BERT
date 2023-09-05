@@ -19,4 +19,10 @@ class BertTrainer():
                                                 self.model.tokenizer,
                                                 output_file)
 
-    def train(self, X, y, steps, X_val=None, y_v
+    def train(self, X, y, steps, X_val=None, y_val=None, eval_cooldown=600):
+        train_examples = self.processor.get_examples(X, y)
+
+        train_features = convert_examples_to_features(train_examples,
+            self.model.labels,
+            self.model.max_seq_len,
+            self.model.tok
