@@ -34,4 +34,20 @@ class BertTrainer():
             drop_remainder=False)
 
         if X_val and y_val:
-            dev_examples = self.
+            dev_examples = self.processor.get_examples(X_val, y_val)
+
+            dev_features = convert_examples_to_features(dev_examples,
+                self.model.labels,
+                self.model.max_seq_len,
+                self.model.tokenizer)
+
+            dev_input_fn = input_fn_builder(
+                features=dev_features,
+                seq_length=self.model.max_seq_len,
+                is_training=True,
+                drop_remainder=False)
+              
+            self.__train_and_evaluate(train_input_fn, dev_input_fn, steps, eval_cooldown)
+        
+        else:
+            
