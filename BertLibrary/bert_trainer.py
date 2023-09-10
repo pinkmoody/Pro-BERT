@@ -54,4 +54,10 @@ class BertTrainer():
 
     def __train_and_evaluate(self, train_input_fn, dev_input_fn, steps, eval_cooldown):
         train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, max_steps=steps)
-        eval_spec = tf.estima
+        eval_spec = tf.estimator.EvalSpec(input_fn=dev_input_fn, throttle_secs=eval_cooldown)
+
+        tf.estimator.train_and_evaluate(self.model.estimator, train_spec, eval_spec)
+
+
+    def train_from_file(self, data_path, steps, eval_cooldown=600):
+        train_
