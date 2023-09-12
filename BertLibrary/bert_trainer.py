@@ -60,4 +60,9 @@ class BertTrainer():
 
 
     def train_from_file(self, data_path, steps, eval_cooldown=600):
-        train_
+        train_file = os.path.join(data_path, 'train.tsv')
+        dev_file = os.path.join(data_path, 'dev.tsv')
+        processed_train_file = os.path.join(data_path, 'train.tf-record')
+        processed_dev_file = os.path.join(data_path, 'dev.tf-record')
+
+        
