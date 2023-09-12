@@ -65,4 +65,10 @@ class BertTrainer():
         processed_train_file = os.path.join(data_path, 'train.tf-record')
         processed_dev_file = os.path.join(data_path, 'dev.tf-record')
 
-        
+        if not (os.path.exists(train_file) and os.path.exists(dev_file)) :
+            raise 'train and/or dev file missing'
+
+        if not os.path.exists(processed_train_file):
+            self.convert_features(train_file, processed_train_file)
+
+        if no
