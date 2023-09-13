@@ -71,4 +71,10 @@ class BertTrainer():
         if not os.path.exists(processed_train_file):
             self.convert_features(train_file, processed_train_file)
 
-        if no
+        if not os.path.exists(processed_dev_file):
+            self.convert_features(dev_file, processed_dev_file)
+
+        train_input_fn = file_based_input_fn_builder(
+            input_file=processed_train_file,
+            seq_length=self.model.max_seq_len,
+            is_training=True,
