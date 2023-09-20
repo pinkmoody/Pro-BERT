@@ -86,4 +86,7 @@ class BertTrainer():
             is_training=True,
             drop_remainder=True)
 
-        train_spec = tf.estimator.TrainSpec(inp
+        train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, max_steps=steps)
+        eval_spec = tf.estimator.EvalSpec(input_fn=eval_input_fn, throttle_secs=eval_cooldown)
+
+        tf.estimator.train_and_evaluate(self.model.estimator, train_spec, eval_spec)
