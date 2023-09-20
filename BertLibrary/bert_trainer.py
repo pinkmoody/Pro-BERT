@@ -78,3 +78,12 @@ class BertTrainer():
             input_file=processed_train_file,
             seq_length=self.model.max_seq_len,
             is_training=True,
+            drop_remainder=True)
+
+        eval_input_fn = file_based_input_fn_builder(
+            input_file=processed_dev_file,
+            seq_length=self.model.max_seq_len,
+            is_training=True,
+            drop_remainder=True)
+
+        train_spec = tf.estimator.TrainSpec(inp
