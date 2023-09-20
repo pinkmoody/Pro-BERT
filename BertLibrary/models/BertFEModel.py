@@ -59,3 +59,59 @@ class BertFEModel(BertModel):
             input_ids = features["input_ids"]
             input_mask = features["input_mask"]
             segment_ids = features["segment_ids"]
+
+            output_sequence = self.create_fe_model(
+                bert_config, layer, input_ids, input_mask, segment_ids)
+
+            tvars = tf.trainable_variables()
+            initialized_variable_names = {}
+
+            if init_checkpoint:
+                (assignment_map, initialized_variable_names
+                 ) = modeling.get_assignment_map_from_checkpoint(tvars, init_checkpoint)
+
+                tf.train.init_from_checkpoint(
+                    init_checkpoint, assignment_map)
+
+            tf.logging.info("**** Trainable Variables ****")
+            for var in tvars:
+                init_string = ""
+                if var.name in initialized_variable_names:
+                    init_string = ", *INIT_FROM_CKPT*"
+                tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
+                                init_string)
+
+            output_spec = EstimatorSpec(
+                mode=mode,
+                predictions={"predictions": output_sequence})
+            return output_spec
+
+        return model_fn
+
+    def create_fe_model(self,
+                        bert_config,
+                        layer,
+                        input_ids,
+                        input_mask,
+                        segment_ids):
+        """Creates a classification model."""
+        model = modeling.BertModel(
+            config=bert_config,
+            is_training=False,
+            input_ids=input_ids,
+            input_mask=input_mask,
+            token_type_ids=segment_ids,
+            use_one_hot_embeddings=False)
+
+        # In the demo, we are doing a simple classification task on the entire
+        # segment.
+        #
+        # If you want to use the token-level output, use model.get_sequence_output()
+        # instead.
+        # or get_all_encoder_layers to get all the layers
+        #output_sequence = model.get_sequence_output()
+        output_sequence = model.all_encoder_layers[layer]
+        input_mask = tf.cast(input_mask, tf.float32)
+        output_sequence = tf.expand_dims(input_mask, -1) * output_sequence
+
+        return output_sequence
