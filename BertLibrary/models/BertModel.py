@@ -19,4 +19,11 @@ class BertModel:
                  ckpt_name,
                  do_lower_case,
                  max_seq_len,
-                 batch_s
+                 batch_size,
+                 labels,
+                 trainable=True,
+                 keep_checkpoint_max=5,
+                 config=None):
+        self.model_dir = model_dir
+        self.bert_config, self.vocab_file, \
+            self.init_checkpoint = self.get_model_co
