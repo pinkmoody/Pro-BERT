@@ -26,4 +26,12 @@ class BertModel:
                  config=None):
         self.model_dir = model_dir
         self.bert_config, self.vocab_file, \
-            self.init_checkpoint = self.get_model_co
+            self.init_checkpoint = self.get_model_configs(model_dir, ckpt_name)
+
+        self.do_lower_case = do_lower_case
+        self.max_seq_len = max_seq_len
+        self.batch_size = batch_size
+        self.processer = None
+        self.keep_checkpoint_max = keep_checkpoint_max
+        self.labels = labels
+      
