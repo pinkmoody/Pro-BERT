@@ -34,4 +34,12 @@ class BertModel:
         self.processer = None
         self.keep_checkpoint_max = keep_checkpoint_max
         self.labels = labels
-      
+        self.config = config if config else None
+        self.predictor = None
+        self.trainable = trainable
+
+    def build(self, model_fn_args, config_args):
+        config = self.get_config(**config_args)
+        model_fn = self.get_model_fn(**model_fn_args)
+
+        self.
