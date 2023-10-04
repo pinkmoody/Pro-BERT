@@ -42,4 +42,12 @@ class BertModel:
         config = self.get_config(**config_args)
         model_fn = self.get_model_fn(**model_fn_args)
 
-        self.
+        self.estimator = Estimator(
+            model_fn=model_fn,
+            config=config,
+            params={'batch_size': self.batch_size})
+
+        self.tokenizer = tokenization.FullTokenizer(
+            vocab_file=self.vocab_file, do_lower_case=self.do_lower_case)
+
+    def get_model_configs(sel
