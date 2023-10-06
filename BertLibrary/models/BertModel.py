@@ -50,4 +50,8 @@ class BertModel:
         self.tokenizer = tokenization.FullTokenizer(
             vocab_file=self.vocab_file, do_lower_case=self.do_lower_case)
 
-    def get_model_configs(sel
+    def get_model_configs(self, base_dir, ckpt_name):
+        bert_config_file = os.path.join(base_dir, 'bert_config.json')
+        vocab_file = os.path.join(base_dir, 'vocab.txt')
+        init_checkpoint = os.path.join(base_dir, ckpt_name)
+        bert_config = modeling.BertConfig.from_json_fil
