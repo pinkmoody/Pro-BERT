@@ -54,4 +54,11 @@ class BertModel:
         bert_config_file = os.path.join(base_dir, 'bert_config.json')
         vocab_file = os.path.join(base_dir, 'vocab.txt')
         init_checkpoint = os.path.join(base_dir, ckpt_name)
-        bert_config = modeling.BertConfig.from_json_fil
+        bert_config = modeling.BertConfig.from_json_file(bert_config_file)
+        return bert_config, vocab_file, init_checkpoint
+
+    def get_config(self, ckpt_output_dir='./output', save_check_steps=1000):
+
+        if not self.config:
+            self.config = tf.ConfigProto(device_count={'GPU': 1})
+            self.config.gpu_option
