@@ -61,4 +61,10 @@ class BertModel:
 
         if not self.config:
             self.config = tf.ConfigProto(device_count={'GPU': 1})
-            self.config.gpu_option
+            self.config.gpu_options.allow_growth = True
+            self.config.gpu_options.per_process_gpu_memory_fraction = 0.5
+
+        run_config = RunConfig(
+            model_dir=ckpt_output_dir,
+            session_config=self.config,
+            keep_checkpoint_max=self.kee
