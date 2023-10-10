@@ -76,4 +76,11 @@ class BertModel:
         return BertPredictor(self.estimator, self.processer, self.config)
 
     def get_trainer(self):
-        assert self.trainable, 'This mod
+        assert self.trainable, 'This model cannot be trained'
+        return BertTrainer(self)
+
+    def get_evaluator(self, iter_steps=1000):
+        return BertEvaluator(self, iter_steps=iter_steps)
+
+    def get_model_fn(self, *args):
+        return NotImplementedError()
