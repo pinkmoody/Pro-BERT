@@ -67,4 +67,13 @@ class BertModel:
         run_config = RunConfig(
             model_dir=ckpt_output_dir,
             session_config=self.config,
-            keep_checkpoint_max=self.kee
+            keep_checkpoint_max=self.keep_checkpoint_max,
+            save_checkpoints_steps=save_check_steps)
+
+        return run_config
+
+    def get_predictor(self):
+        return BertPredictor(self.estimator, self.processer, self.config)
+
+    def get_trainer(self):
+        assert self.trainable, 'This mod
