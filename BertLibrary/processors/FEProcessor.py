@@ -8,4 +8,6 @@ class FEProcessor(Processor):
 
     def serving_input_receiver_fn(self):
         features = {
-            "input_
+            "input_ids": tf.placeholder(dtype=tf.int64, shape=[None, self.max_seq_len], name='input_ids'),
+            "input_mask": tf.placeholder(dtype=tf.int64, shape=[None, self.max_seq_len], name='input_mask'),
+            "segment_ids": tf.placeholder(dtype=tf.int64, shape=[None, 
