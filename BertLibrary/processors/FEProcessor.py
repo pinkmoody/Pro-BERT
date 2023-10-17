@@ -18,4 +18,11 @@ class FEProcessor(Processor):
     def preprocess_sentences(self, sentences):
         features = {'input_ids': [],
                     'input_mask': [],
-                    'se
+                    'segment_ids': []}
+
+        # Get predictions dictionary
+        for i, s in enumerate(sentences):
+            input_ids, input_mask, segment_ids = self.convert_example(
+                i, s, self.max_seq_len, self.tokenizer)
+
+            features['input_ids'
