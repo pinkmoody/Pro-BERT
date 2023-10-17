@@ -33,4 +33,10 @@ class FEProcessor(Processor):
 
     def convert_example(self, ex_index, example, max_seq_length,
                         tokenizer):
-        """Con
+        """Converts a single `InputExample` into a single `InputFeatures`."""
+
+        tokens_a = tokenizer.tokenize(example)
+
+        # Account for [CLS] and [SEP] with "- 2"
+        if len(tokens_a) > max_seq_length - 2:
+            tokens_a = tokens_a[0:(max_seq_lengt
