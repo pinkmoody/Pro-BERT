@@ -25,4 +25,12 @@ class FEProcessor(Processor):
             input_ids, input_mask, segment_ids = self.convert_example(
                 i, s, self.max_seq_len, self.tokenizer)
 
-            features['input_ids'
+            features['input_ids'].append(input_ids)
+            features['input_mask'].append(input_mask)
+            features['segment_ids'].append(segment_ids)
+
+        return features
+
+    def convert_example(self, ex_index, example, max_seq_length,
+                        tokenizer):
+        """Con
