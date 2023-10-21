@@ -39,4 +39,14 @@ class FEProcessor(Processor):
 
         # Account for [CLS] and [SEP] with "- 2"
         if len(tokens_a) > max_seq_length - 2:
-            tokens_a = tokens_a[0:(max_seq_lengt
+            tokens_a = tokens_a[0:(max_seq_length - 2)]
+
+        tokens = []
+        segment_ids = []
+        tokens.append("[CLS]")
+        segment_ids.append(0)
+        for token in tokens_a:
+            tokens.append(token)
+            segment_ids.append(0)
+        tokens.append("[SEP]")
+        segment_
