@@ -57,4 +57,12 @@ class FEProcessor(Processor):
         # tokens are attended to.
         input_mask = [1] * len(input_ids)
 
-        # Zero-pad up to the sequence 
+        # Zero-pad up to the sequence length.
+        while len(input_ids) < max_seq_length:
+            input_ids.append(0)
+            input_mask.append(0)
+            segment_ids.append(0)
+
+        assert len(input_ids) == max_seq_length
+        assert len(input_mask) == max_seq_length
+      
