@@ -49,4 +49,12 @@ class FEProcessor(Processor):
             tokens.append(token)
             segment_ids.append(0)
         tokens.append("[SEP]")
-        segment_
+        segment_ids.append(0)
+
+        input_ids = tokenizer.convert_tokens_to_ids(tokens)
+
+        # The mask has 1 for real tokens and 0 for padding tokens. Only real
+        # tokens are attended to.
+        input_mask = [1] * len(input_ids)
+
+        # Zero-pad up to the sequence 
