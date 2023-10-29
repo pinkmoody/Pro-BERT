@@ -72,3 +72,75 @@ BertFTModel constructor parameters:
 
 ### Feature Extraction Model
 ```python
+# Import model for doing feature extraction
+from BertLibrary import BertFEModel
+
+# Instantiate the model
+fe_model = BertFEModel( model_dir='uncased_L-12_H-768_A-12',
+                        ckpt_name="bert_model.ckpt",
+                        layer=-2,
+                        do_lower_case=False,
+                        max_seq_len=50,
+                        batch_size=32,
+                        )
+
+
+fe_predictor =  fe_model.get_predictor()
+```
+
+BertFEModel constructor parameters:
+
+| Command | Description |
+| ------ | ------ |
+| model_dir | The path to the Bert pretrained model directory  |
+| ckpt_name | The name of the checkpoint you want use |
+| layer | The number of layer to select for feature extractions. You can use negative indexes like -2 |
+| do_lower_case | Do a lower case during preprocessing if set to true |
+| max_seq_len | Set a max sequence length of the model (max 512) |
+| batch_size | Regulate the batch size for training/evaluation/prediction |
+| config | (Optional) Tensorflow config object |
+
+## Finetuning and Evaluation
+To run the training you have 2 options: run from file and run from memory.
+
+If you want to run from file you must first create 3 separate files (first two for training, last one for evaluation) which are `train|dev|test.tsv`. All those files must respect the tsv format having as first column the string label and the second column the text
+with no header.
+
+Example:
+
+| Remember to | not inset the header |
+| ------ | ------ |
+| positive | I love cats |
+| negative | I hate cucumbers |
+
+For example if you have a folder `./dataset` with `train.tsv` and `dev.tsv`, you can run the finetuning like this:
+```python
+path_to_file = './datasets'
+ft_trainer.train_from_file(path_to_file, 60000)
+```
+
+Instead if you want to run the finetuning from memory, you can pass just the data like in the following example where `X` and `X_val` are a list of sentences, and `y` contains the string labels
+```python
+X, y, X_val, y_val = get_train_test_data()
+ft_trainer.train(X, y, X_val=X_val, y_val=y_val, 60000)
+```
+
+To run evaluation you can run this command if you are working with files
+```python
+ft_evaluator.evaluate_from_file(path_to_file, checkpoint="output/model.ckpt-35000") 
+```
+
+Or you can run it like this on memory
+```python
+ft_evaluator.evaluate(X_test, y_test, checkpoint="output/model.ckpt-35000") 
+```
+
+## Prediction
+To run predictions you must instantiate the model first, and then you get the predictor using get_predictor funciton from the model object
+```python
+# Get the predictor from the desired model
+predictor =  model.get_predictor()
+
+# Call the predictor passing a list of sentences
+predictor(sentences)
+```
