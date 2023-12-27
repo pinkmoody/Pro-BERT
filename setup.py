@@ -23,4 +23,10 @@ setup(
   author = 'KPI6 Research',                   
   author_email = 'info@kpi6.com',    
   url = 'https://github.com/kpi6research/Bert-as-a-Library',   
-  download_url = 'https://github.com/kpi6resea
+  download_url = 'https://github.com/kpi6research/Bert-as-a-Library/archive/0.0.4.tar.gz',   
+  keywords = ['Bert', 'fientuning', 'nlp'],  
+  install_requires=install_deps,
+  classifiers=[
+    'Development Status :: 4 - Beta',   
+    'Intended Audience :: Developers',      
+    'Topic ::
