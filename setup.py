@@ -19,4 +19,8 @@ setup(
   packages = find_packages(),
   version = '0.0.4',     
   license='MIT',        
-  description = 'BaaL is a Tensorflow libra
+  description = 'BaaL is a Tensorflow library for quick and easy training and finetuning of models based on Bert', 
+  author = 'KPI6 Research',                   
+  author_email = 'info@kpi6.com',    
+  url = 'https://github.com/kpi6research/Bert-as-a-Library',   
+  download_url = 'https://github.com/kpi6resea
