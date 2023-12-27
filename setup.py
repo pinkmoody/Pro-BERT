@@ -11,4 +11,12 @@ def get_dist(pkgname):
 
 install_deps = ['numpy']
 
-if
+if get_dist('tensorflow') is None and get_dist('tensorflow_gpu') is None:
+    install_deps.append('tensorflow')
+
+setup(
+  name = 'BertLibrary',   
+  packages = find_packages(),
+  version = '0.0.4',     
+  license='MIT',        
+  description = 'BaaL is a Tensorflow libra
